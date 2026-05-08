@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cek Penipu - by Satpam UMKM</title>
+    <style>
+        body { font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; background: #f0f0f0; }
+        h1 { color: #d32f2f; text-align: center; }
+        input, button { width: 100%; padding: 12px; margin: 8px 0; box-sizing: border-box; border-radius: 8px; border: 1px solid #ccc; }
+        button { background: #d32f2f; color: white; font-weight: bold; border: none; cursor: pointer; }
+       .hasil { padding: 15px; margin-top: 15px; border-radius: 8px; font-weight: bold; }
+       .aman { background: #c8e6c9; color: #2e7d32; }
+       .bahaya { background: #ffcdd2; color: #c62828; }
+       .lapor { margin-top: 30px; border-top: 2px dashed #ccc; padding-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>🛡️ CEK PENIPU</h1>
+    <p>Cek dulu nomor rekening / HP sebelum transfer. Biar gak nyesel.</p>
+
+    <input type="text" id="inputNomor" placeholder="Masukkan No. Rekening / HP Penipu">
+    <button onclick="cekNomor()">CEK SEKARANG</button>
+
+    <div id="hasilCek"></div>
+
+    <div class="lapor">
+        <h3>Laporin Penipu Baru</h3>
+        <input type="text" id="inputLapor" placeholder="No. Rek/HP yg nipu">
+        <input type="text" id="inputModus" placeholder="Modusnya apa? Ex: Investasi bodong">
+        <button onclick="laporNomor()">LAPORKAN & SIMPAN</button>
+    </div>
+
+    <script>
+        // Ambil data dari memori HP
+        function getDataPenipu() {
+            return JSON.parse(localStorage.getItem('dataPenipu')) || {};
+        }
+
+        // Simpan data ke memori HP
+        function setDataPenipu(data) {
+            localStorage.setItem('dataPenipu', JSON.stringify(data));
+        }
+
+        // Fungsi CEK
+        function cekNomor() {
+            const nomor = document.getElementById('inputNomor').value.trim();
+            const hasilDiv = document.getElementById('hasilCek');
+            if(!nomor) {
+                hasilDiv.innerHTML = '<div class="hasil">Isi nomornya dulu bang.</div>';
+                return;
+            }
+
+            const dataPenipu = getDataPenipu();
+            if(dataPenipu[nomor]) {
+                hasilDiv.innerHTML = `<div class="hasil bahaya">
+                    ⚠️ BAHAYA! Nomor ini pernah dilaporin.<br>
+                    Modus: ${dataPenipu[nomor].modus}<br>
+                    Dilaporin: ${dataPenipu[nomor].jumlah} kali
+                </div>`;
+            } else {
+                hasilDiv.innerHTML = `<div class="hasil aman">
+                    ✅ AMAN. Belum ada laporan untuk nomor ini.<br>
+                    Tapi tetep hati-hati ya bang.
+                </div>`;
+            }
+        }
+
+        // Fungsi LAPOR
+        function laporNomor() {
+            const nomor = document.getElementById('inputLapor').value.trim();
+            const modus = document.getElementById('inputModus').value.trim();
+            if(!nomor ||!modus) {
+                alert('Isi nomor & modusnya dulu');
+                return;
+            }
+
+            const dataPenipu = getDataPenipu();
+            if(dataPenipu[nomor]) {
+                dataPenipu[nomor].jumlah += 1; // Kalo udah ada, tambah jumlah laporan
+            } else {
+                dataPenipu[nomor] = { modus: modus, jumlah: 1 }; // Kalo baru, bikin data baru
+            }
+            setDataPenipu(dataPenipu);
+            alert('Makasih bang! Laporan udah disimpen di HP lu. Bantu sebarin app ini biar data makin banyak.');
+            document.getElementById('inputLapor').value = '';
+            document.getElementById('inputModus').value = '';
+        }
+
+        // Data awal biar gak kosong. Lu bisa tambah sendiri.
+        if(!localStorage.getItem('dataPenipu')) {
+            const dataAwal = {
+                "1234567890": { modus: "Investasi bodong crypto", jumlah: 25 },
+                "08123456789": { modus: "Mama minta pulsa, HP hilang", jumlah: 102 }
+            };
+            setDataPenipu(dataAwal);
+        }
+    </script>
+</body>
+      </html>
