@@ -1,100 +1,163 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cek Penipu - by Satpam UMKM</title>
-    <style>
-        body { font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; background: #f0f0f0; }
-        h1 { color: #d32f2f; text-align: center; }
-        input, button { width: 100%; padding: 12px; margin: 8px 0; box-sizing: border-box; border-radius: 8px; border: 1px solid #ccc; }
-        button { background: #d32f2f; color: white; font-weight: bold; border: none; cursor: pointer; }
-       .hasil { padding: 15px; margin-top: 15px; border-radius: 8px; font-weight: bold; }
-       .aman { background: #c8e6c9; color: #2e7d32; }
-       .bahaya { background: #ffcdd2; color: #c62828; }
-       .lapor { margin-top: 30px; border-top: 2px dashed #ccc; padding-top: 20px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Satpam Digital Indonesia - Cek Penipu</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f5f5f5; }
+   .box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    h1 { text-align: center; color: #2c3e50; margin-bottom: 5px; }
+   .sub { text-align: center; color: #7f8c8d; font-size: 14px; margin-bottom: 20px; }
+    input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+    button { width: 100%; padding: 14px; background: #e74c3c; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    button:hover { background: #c0392b; }
+    button:disabled { background: #95a5a6; cursor: not-allowed; }
+    #hasil { padding: 15px; border-radius: 8px; margin-top: 15px; font-weight: bold; text-align: center; }
+   .aman { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+   .bahaya { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+   .loading { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+   .stats { display: flex; justify-content: space-around; text-align: center; }
+   .stat h3 { margin: 0; color: #e74c3c; font-size: 24px; }
+   .stat p { margin: 5px 0 0 0; color: #7f8c8d; font-size: 12px; }
+  </style>
 </head>
 <body>
-    <h1>🛡️ CEK PENIPU</h1>
-    <p>Cek dulu nomor rekening / HP sebelum transfer. Biar gak nyesel.</p>
 
-    <input type="text" id="inputNomor" placeholder="Masukkan No. Rekening / HP Penipu">
-    <button onclick="cekNomor()">CEK SEKARANG</button>
+  <div class="box">
+    <h1>🛡️ Satpam Digital Indonesia</h1>
+    <p class="sub">Lapor & Cek Nomor/Rekening Penipu Nasional</p>
 
-    <div id="hasilCek"></div>
-
-    <div class="lapor">
-        <h3>Laporin Penipu Baru</h3>
-        <input type="text" id="inputLapor" placeholder="No. Rek/HP yg nipu">
-        <input type="text" id="inputModus" placeholder="Modusnya apa? Ex: Investasi bodong">
-        <button onclick="laporNomor()">LAPORKAN & SIMPAN</button>
+    <div class="stats">
+      <div class="stat">
+        <h3 id="totalLaporan">0</h3>
+        <p>Total Laporan</p>
+      </div>
+      <div class="stat">
+        <h3 id="statusServer">OFF</h3>
+        <p>Status Server</p>
+      </div>
     </div>
+  </div>
 
-    <script>
-        // Ambil data dari memori HP
-        function getDataPenipu() {
-            return JSON.parse(localStorage.getItem('dataPenipu')) || {};
+  <div class="box">
+    <h2>🔍 Cek Nomor/Rekening</h2>
+    <input type="text" id="inputCek" placeholder="Masukkan nomor HP / rekening">
+    <button onclick="cekData()">CEK SEKARANG</button>
+    <div id="hasil"></div>
+  </div>
+
+  <div class="box">
+    <h2>🚨 Lapor Penipu Baru</h2>
+    <input type="text" id="inputLapor" placeholder="Nomor HP / rekening penipu">
+    <textarea id="inputKronologi" placeholder="Kronologi singkat: modus apa, kapan kejadian" rows="3"></textarea>
+    <button onclick="laporData()">LAPORKAN KE SERVER</button>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue, query, orderByChild, equalTo, get } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
+
+    // CONFIG LU UDAH GW TEMPEL PROF
+    const firebaseConfig = {
+      apiKey: "AIzaSyDymhDdWpz17nJWrqbXc6djpRbNtg5pjb4",
+      authDomain: "cekpenipuan-f1c13.firebaseapp.com",
+      databaseURL: "https://cekpenipuan-f1c13-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "cekpenipuan-f1c13",
+      storageBucket: "cekpenipuan-f1c13.firebasestorage.app",
+      messagingSenderId: "678145277685",
+      appId: "1:678145277685:web:7117058bab91e1cf2e4fbc",
+      measurementId: "G-G2P66VENMC"
+    };
+
+    // INIT FIREBASE
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const laporanRef = ref(db, 'laporan');
+
+    // UPDATE STATUS SERVER
+    document.getElementById('statusServer').textContent = 'ON';
+    document.getElementById('statusServer').style.color = '#27ae60';
+
+    // UPDATE JUMLAH LAPORAN REALTIME
+    onValue(laporanRef, (snapshot) => {
+      const total = snapshot.size;
+      document.getElementById('totalLaporan').textContent = total;
+    });
+
+    // FUNGSI CEK DATA
+    window.cekData = async function() {
+      const input = document.getElementById('inputCek').value.trim();
+      const hasil = document.getElementById('hasil');
+
+      if (!input) {
+        hasil.className = 'bahaya';
+        hasil.textContent = 'Masukkan nomor/rekening dulu Prof!';
+        return;
+      }
+
+      hasil.className = 'loading';
+      hasil.textContent = '⏳ Menghubungi server Singapore...';
+
+      const q = query(laporanRef, orderByChild('nomor'), equalTo(input));
+      const snapshot = await get(q);
+
+      if (snapshot.exists()) {
+        const data = Object.values(snapshot.val())[0];
+        hasil.className = 'bahaya';
+        hasil.innerHTML = `🚨 BAHAYA! NOMOR INI SUDAH DILAPORKAN <br><br> Modus: ${data.kronologi} <br> Dilaporkan: ${new Date(data.waktu).toLocaleString('id-ID')}`;
+      } else {
+        hasil.className = 'aman';
+        hasil.textContent = '✅ AMAN. Nomor ini belum ada di database penipu nasional.';
+      }
+    }
+
+    // FUNGSI LAPOR DATA
+    window.laporData = async function() {
+      const nomor = document.getElementById('inputLapor').value.trim();
+      const kronologi = document.getElementById('inputKronologi').value.trim();
+      const btn = event.target;
+
+      if (!nomor ||!kronologi) {
+        alert('Isi nomor & kronologi dulu Prof!');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'MENGIRIM KE SERVER...';
+
+      try {
+        // Cek duplikat dulu
+        const q = query(laporanRef, orderByChild('nomor'), equalTo(nomor));
+        const snapshot = await get(q);
+
+        if (snapshot.exists()) {
+          alert('Nomor ini sudah pernah dilaporkan Prof. Cek aja di atas.');
+          btn.disabled = false;
+          btn.textContent = 'LAPORKAN KE SERVER';
+          return;
         }
 
-        // Simpan data ke memori HP
-        function setDataPenipu(data) {
-            localStorage.setItem('dataPenipu', JSON.stringify(data));
-        }
+        // Push ke Firebase
+        await push(laporanRef, {
+          nomor: nomor,
+          kronologi: kronologi,
+          waktu: Date.now(),
+          pelapor: 'Anonim'
+        });
 
-        // Fungsi CEK
-        function cekNomor() {
-            const nomor = document.getElementById('inputNomor').value.trim();
-            const hasilDiv = document.getElementById('hasilCek');
-            if(!nomor) {
-                hasilDiv.innerHTML = '<div class="hasil">Isi nomornya dulu bang.</div>';
-                return;
-            }
+        alert('✅ BERHASIL! Laporan lu udah masuk server nasional. Seluruh Indonesia bisa lihat.');
+        document.getElementById('inputLapor').value = '';
+        document.getElementById('inputKronologi').value = '';
 
-            const dataPenipu = getDataPenipu();
-            if(dataPenipu[nomor]) {
-                hasilDiv.innerHTML = `<div class="hasil bahaya">
-                    ⚠️ BAHAYA! Nomor ini pernah dilaporin.<br>
-                    Modus: ${dataPenipu[nomor].modus}<br>
-                    Dilaporin: ${dataPenipu[nomor].jumlah} kali
-                </div>`;
-            } else {
-                hasilDiv.innerHTML = `<div class="hasil aman">
-                    ✅ AMAN. Belum ada laporan untuk nomor ini.<br>
-                    Tapi tetep hati-hati ya bang.
-                </div>`;
-            }
-        }
+      } catch (error) {
+        alert('❌ Gagal kirim: ' + error.message);
+      }
 
-        // Fungsi LAPOR
-        function laporNomor() {
-            const nomor = document.getElementById('inputLapor').value.trim();
-            const modus = document.getElementById('inputModus').value.trim();
-            if(!nomor ||!modus) {
-                alert('Isi nomor & modusnya dulu');
-                return;
-            }
+      btn.disabled = false;
+      btn.textContent = 'LAPORKAN KE SERVER';
+    }
+  </script>
 
-            const dataPenipu = getDataPenipu();
-            if(dataPenipu[nomor]) {
-                dataPenipu[nomor].jumlah += 1; // Kalo udah ada, tambah jumlah laporan
-            } else {
-                dataPenipu[nomor] = { modus: modus, jumlah: 1 }; // Kalo baru, bikin data baru
-            }
-            setDataPenipu(dataPenipu);
-            alert('Makasih bang! Laporan udah disimpen di HP lu. Bantu sebarin app ini biar data makin banyak.');
-            document.getElementById('inputLapor').value = '';
-            document.getElementById('inputModus').value = '';
-        }
-
-        // Data awal biar gak kosong. Lu bisa tambah sendiri.
-        if(!localStorage.getItem('dataPenipu')) {
-            const dataAwal = {
-                "1234567890": { modus: "Investasi bodong crypto", jumlah: 25 },
-                "08123456789": { modus: "Mama minta pulsa, HP hilang", jumlah: 102 }
-            };
-            setDataPenipu(dataAwal);
-        }
-    </script>
 </body>
-      </html>
+</html>
