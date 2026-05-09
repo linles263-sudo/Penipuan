@@ -6,27 +6,29 @@
   <title>Satpam Digital Indonesia - Cek Penipu</title>
   <style>
     body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f5f5f5; }
- .box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+.box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
     h1 { text-align: center; color: #2c3e50; margin-bottom: 5px; }
- .sub { text-align: center; color: #7f8c8d; font-size: 14px; margin-bottom: 20px; }
+.sub { text-align: center; color: #7f8c8d; font-size: 14px; margin-bottom: 20px; }
     input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
     label { font-weight: bold; color: #2c3e50; font-size: 14px; display: block; margin-top: 10px; }
     button { width: 100%; padding: 14px; background: #e74c3c; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
     button:hover { background: #c0392b; }
     button:disabled { background: #95a5a6; cursor: not-allowed; }
     #hasil { padding: 15px; border-radius: 8px; margin-top: 15px; font-weight: bold; text-align: center; }
- .aman { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
- .bahaya { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
- .loading { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
- .stats { display: flex; justify-content: space-around; text-align: center; }
- .stat h3 { margin: 0; color: #e74c3c; font-size: 24px; }
- .stat p { margin: 5px 0 0 0; color: #7f8c8d; font-size: 12px; }
- .bukti-img { width: 100%; max-width: 150px; margin: 5px; border-radius: 8px; border: 2px solid #ddd; }
- .bukti-container { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
- .note { font-size: 12px; color: #7f8c8d; margin: 5px 0; }
- .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
- .verified { background: #d4edda; color: #155724; }
- .pending { background: #fff3cd; color: #856404; }
+.aman { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.bahaya { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+.loading { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+.stats { display: flex; justify-content: space-around; text-align: center; }
+.stat h3 { margin: 0; color: #e74c3c; font-size: 24px; }
+.stat p { margin: 5px 0 0 0; color: #7f8c8d; font-size: 12px; }
+.bukti-img { width: 100%; max-width: 150px; margin: 5px; border-radius: 8px; border: 2px solid #ddd; }
+.bukti-container { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+.note { font-size: 12px; color: #7f8c8d; margin: 5px 0; }
+.status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+.verified { background: #d4edda; color: #155724; }
+.pending { background: #fff3cd; color: #856404; }
+.row { display: flex; gap: 10px; }
+.row > div { flex: 1; }
   </style>
 </head>
 <body>
@@ -60,22 +62,26 @@
 
   <div class="box">
     <h2>🚨 Lapor Penipu Baru</h2>
-    <input type="text" id="inputLapor" placeholder="Nomor HP / rekening penipu">
 
-    <label>Jenis E-Wallet / Bank:</label>
-    <select id="inputJenis">
-      <option value="">Pilih Jenis Rekening/E-Wallet</option>
-      <option value="DANA">DANA</option>
-      <option value="GoPay">GoPay</option>
-      <option value="OVO">OVO</option>
-      <option value="ShopeePay">ShopeePay</option>
-      <option value="LinkAja">LinkAja</option>
-      <option value="BCA">Bank BCA</option>
-      <option value="BRI">Bank BRI</option>
-      <option value="Mandiri">Bank Mandiri</option>
-      <option value="BNI">Bank BNI</option>
-      <option value="Lainnya">Lainnya</option>
-    </select>
+    <div class="row">
+      <div>
+        <label>Kategori:</label>
+        <select id="inputKategori" onchange="updateJenis()">
+          <option value="">Pilih Kategori</option>
+          <option value="E-Wallet">E-Wallet</option>
+          <option value="Bank">Bank Transfer</option>
+        </select>
+      </div>
+      <div>
+        <label>Nama Platform:</label>
+        <select id="inputJenis">
+          <option value="">Pilih kategori dulu</option>
+        </select>
+      </div>
+    </div>
+
+    <label id="labelNomor">Nomor HP / Rekening Penipu:</label>
+    <input type="text" id="inputLapor" placeholder="Pilih kategori dulu">
 
     <label>Kronologi Kejadian:</label>
     <textarea id="inputKronologi" placeholder="Modus apa, kapan kejadian, kerugian berapa" rows="3"></textarea>
@@ -106,7 +112,6 @@
     const db = getDatabase(app);
     const laporanRef = ref(db, 'laporan');
 
-    document.getElementById('statusServer').textContent = 'ON';
     document.getElementById('statusServer').style.color = '#27ae60';
 
     onValue(laporanRef, (snapshot) => {
@@ -115,7 +120,39 @@
       document.getElementById('totalKerugian').textContent = (total * 0.5).toFixed(1);
     });
 
-    // FUNGSI KOMPRES + CONVERT KE BASE64
+    // DATA E-WALLET VS BANK
+    const dataPlatform = {
+      'E-Wallet': ['DANA', 'GoPay', 'OVO', 'ShopeePay', 'LinkAja'],
+      'Bank': ['BCA', 'BRI', 'Mandiri', 'BNI', 'CIMB Niaga', 'Permata', 'BSI']
+    };
+
+    // FUNGSI UPDATE DROPDOWN JENIS
+    window.updateJenis = function() {
+      const kategori = document.getElementById('inputKategori').value;
+      const jenisSelect = document.getElementById('inputJenis');
+      const inputLapor = document.getElementById('inputLapor');
+      const labelNomor = document.getElementById('labelNomor');
+
+      jenisSelect.innerHTML = '<option value="">Pilih Platform</option>';
+
+      if (kategori === 'E-Wallet') {
+        labelNomor.textContent = 'Nomor HP E-Wallet Penipu:';
+        inputLapor.placeholder = 'Contoh: 081234567890';
+        dataPlatform['E-Wallet'].forEach(nama => {
+          jenisSelect.innerHTML += `<option value="${nama}">${nama}</option>`;
+        });
+      } else if (kategori === 'Bank') {
+        labelNomor.textContent = 'Nomor Rekening Bank Penipu:';
+        inputLapor.placeholder = 'Contoh: 1234567890';
+        dataPlatform['Bank'].forEach(nama => {
+          jenisSelect.innerHTML += `<option value="Bank ${nama}">Bank ${nama}</option>`;
+        });
+      } else {
+        labelNomor.textContent = 'Nomor HP / Rekening Penipu:';
+        inputLapor.placeholder = 'Pilih kategori dulu';
+      }
+    }
+
     async function fileToBase64(file) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -125,13 +162,12 @@
           img.src = event.target.result;
           img.onload = () => {
             const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 600; // Kecilin biar hemat database
+            const MAX_WIDTH = 600;
             const scaleSize = MAX_WIDTH / img.width;
             canvas.width = MAX_WIDTH;
             canvas.height = img.height * scaleSize;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            // Kompres jadi 0.6 quality biar kecil
             resolve(canvas.toDataURL('image/jpeg', 0.6));
           };
         };
@@ -171,7 +207,8 @@
 
         hasil.className = 'bahaya';
         hasil.innerHTML = `🚨 BAHAYA! NOMOR INI SUDAH DILAPORKAN <br><br>
-        Jenis: <b>${data.jenis || 'Tidak diketahui'}</b> <br>
+        Kategori: <b>${data.kategori || '-'}</b> <br>
+        Platform: <b>${data.jenis || 'Tidak diketahui'}</b> <br>
         Status: ${statusText} <br>
         Modus: ${data.kronologi} <br>
         Dilaporkan: ${new Date(data.waktu).toLocaleString('id-ID')} <br>
@@ -185,12 +222,13 @@
     window.laporData = async function() {
       const nomor = document.getElementById('inputLapor').value.trim();
       const kronologi = document.getElementById('inputKronologi').value.trim();
+      const kategori = document.getElementById('inputKategori').value;
       const jenis = document.getElementById('inputJenis').value;
       const files = document.getElementById('inputBukti').files;
       const btn = event.target;
 
-      if (!nomor ||!kronologi ||!jenis) {
-        alert('Isi nomor, jenis, & kronologi dulu Prof!');
+      if (!nomor ||!kronologi ||!kategori ||!jenis) {
+        alert('Isi semua kolom dulu Prof! Kategori & Platform wajib dipilih.');
         return;
       }
 
@@ -205,7 +243,7 @@
       }
 
       for (let file of files) {
-        if (file.size > 500000) { // 500KB
+        if (file.size > 500000) {
           alert('Foto ' + file.name + ' kegedean Prof! Max 500KB. Kompres dulu pake aplikasi.');
           return;
         }
@@ -236,6 +274,7 @@
         await push(laporanRef, {
           nomor: nomor,
           kronologi: kronologi,
+          kategori: kategori, // <- BARU
           jenis: jenis,
           waktu: Date.now(),
           pelapor: 'Anonim',
@@ -246,7 +285,8 @@
         alert('✅ BERHASIL! Laporan + bukti udah masuk server. 100% Gratis tanpa billing.');
         document.getElementById('inputLapor').value = '';
         document.getElementById('inputKronologi').value = '';
-        document.getElementById('inputJenis').value = '';
+        document.getElementById('inputKategori').value = '';
+        document.getElementById('inputJenis').innerHTML = '<option value="">Pilih kategori dulu</option>';
         document.getElementById('inputBukti').value = '';
 
       } catch (error) {
