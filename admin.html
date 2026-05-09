@@ -7,27 +7,37 @@
     <style>
         body { font-family: Arial, sans-serif; background: #111; color: #fff; padding: 10px; }
         h1 { color: #00ff88; text-align: center; }
-   .tab { display: flex; gap: 10px; margin-bottom: 15px; }
-   .tab button { flex: 1; padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
-   .tab.active { background: #00ff88; color: #000; }
-   .tab.inactive { background: #333; color: #fff; }
-   .laporan { background: #222; border: 1px solid #444; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
-   .laporan div { margin: 6px 0; }
-   .nomor { font-size: 20px; color: #ff4444; font-weight: bold; }
-   .label { color: #00ff88; font-weight: bold; }
-   .kronologi { margin: 10px 0; color: #ccc; }
+  .tab { display: flex; gap: 10px; margin-bottom: 15px; }
+  .tab button { flex: 1; padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+  .tab.active { background: #00ff88; color: #000; }
+  .tab.inactive { background: #333; color: #fff; }
+  .export-bar { display: flex; gap: 10px; margin-bottom: 15px; }
+  .export-bar button { flex:1; padding:12px; border:none; border-radius:5px; font-weight:bold; cursor:pointer; }
+  .btn-excel { background:#00ff88; color:#000; }
+  .btn-pdf { background:#ff4444; color:#fff; }
+  .laporan { background: #222; border: 1px solid #444; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+  .laporan div { margin: 6px 0; }
+  .nomor { font-size: 20px; color: #ff4444; font-weight: bold; }
+  .label { color: #00ff88; font-weight: bold; }
+  .kronologi { margin: 10px 0; color: #ccc; }
         img { max-width: 100%; border-radius: 5px; margin-top: 10px; border: 2px solid #00ff88; }
         button { padding: 10px 15px; border: none; border-radius: 5px; font-weight: bold; margin-right: 10px; cursor: pointer; }
-   .acc { background: #00ff88; color: #000; }
-   .tolak { background: #ff4444; color: #fff; }
-   .loading { text-align: center; font-size: 18px; }
-   .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; background: #444; }
-   .verified { border-left: 4px solid #00ff88; }
-   .pending { border-left: 4px solid #ffaa00; }
+  .acc { background: #00ff88; color: #000; }
+  .tolak { background: #ff4444; color: #fff; }
+  .loading { text-align: center; font-size: 18px; }
+  .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; background: #444; }
+  .verified { border-left: 4px solid #00ff88; }
+  .pending { border-left: 4px solid #ffaa00; }
     </style>
 </head>
 <body>
     <h1>🛡️ DASHBOARD HOKAGE 🛡️</h1>
+
+    <!-- TOMBOL EXPORT BARU PROF -->
+    <div class="export-bar">
+        <button class="btn-excel" onclick="downloadExcel()">📥 DOWNLOAD EXCEL</button>
+        <button class="btn-pdf" onclick="downloadPDF()">📄 DOWNLOAD PDF</button>
+    </div>
 
     <div class="tab">
         <button id="tabPending" class="active" onclick="gantiTab('pending')">⏳ PENDING</button>
@@ -35,6 +45,10 @@
     </div>
 
     <div id="list-laporan" class="loading">Loading laporan...</div>
+
+    <!-- LIBRARY EXPORT -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
@@ -55,6 +69,7 @@
         const db = getDatabase(app);
         const listLaporan = document.getElementById('list-laporan');
         let modeTab = 'pending';
+        let semuaDataLaporan = []; // BUAT NYIMPEN DATA GLOBAL PROF
 
         const passwordAsli = "hokage2026";
         const password = prompt("Masukin Password Hokage:");
@@ -75,11 +90,13 @@
             const laporanRef = ref(db, 'laporan');
             onValue(laporanRef, (snapshot) => {
                 listLaporan.innerHTML = '';
+                semuaDataLaporan = []; // RESET DULU TIAP LOAD
                 let adaData = false;
 
                 snapshot.forEach((data) => {
                     const key = data.key;
                     const laporan = data.val();
+                    semuaDataLaporan.push({...laporan, id: key}); // SIMPEN KE ARRAY GLOBAL
 
                     // Filter sesuai tab
                     if (modeTab === 'pending' && laporan.status!== 'pending') return;
@@ -132,6 +149,72 @@
                 remove(ref(db, 'laporan/' + key));
                 alert('Laporan berhasil dihapus.');
             }
+        }
+
+        // FUNCTION DOWNLOAD EXCEL PROF
+        window.downloadExcel = function() {
+            // Filter data sesuai tab yg lagi dibuka
+            const dataFilter = semuaDataLaporan.filter(l => {
+                if (modeTab === 'pending') return l.status === 'pending';
+                return true; // tab semua = ambil semua
+            });
+
+            if(dataFilter.length === 0) return alert('Data kosong Prof! ACC dulu atau ganti tab.');
+
+            const dataExport = dataFilter.map(l => ({
+                'Status': l.status,
+                'Kategori': l.kategori || '-',
+                'Platform': l.jenis || l.namaPlatform || l.platform || l.bank || '-',
+                'Nomor/Rekening': l.rekening || l.nomor || '-',
+                'Pelapor': l.pelapor || 'Anonim',
+                'Kronologi': l.kronologi || '-',
+                'Waktu Lapor': l.waktu? new Date(l.waktu).toLocaleString('id-ID') : '-',
+                'ID Laporan': l.id
+            }));
+
+            const ws = XLSX.utils.json_to_sheet(dataExport);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Data Penipu");
+            const tgl = new Date().toLocaleDateString('id-ID').replace(/\//g, '-');
+            XLSX.writeFile(wb, `Laporan_Penipu_${modeTab}_${tgl}.xlsx`);
+            alert(`Excel ${modeTab} berhasil di download! Total: ${dataFilter.length} data`);
+        }
+
+        // FUNCTION DOWNLOAD PDF PROF
+        window.downloadPDF = function() {
+            const dataFilter = semuaDataLaporan.filter(l => {
+                if (modeTab === 'pending') return l.status === 'pending';
+                return true;
+            });
+
+            if(dataFilter.length === 0) return alert('Data kosong Prof!');
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const tgl = new Date().toLocaleString('id-ID');
+
+            doc.setFontSize(16);
+            doc.text("LAPORAN MASSAL REKENING PENIPU", 14, 20);
+            doc.setFontSize(10);
+            doc.text(`Tab: ${modeTab.toUpperCase()} | Total: ${dataFilter.length} Laporan`, 14, 28);
+            doc.text(`Dicetak: ${tgl} | CekPenipuan.id`, 14, 34);
+
+            let y = 45;
+            dataFilter.forEach((l, i) => {
+                if (y > 270) { doc.addPage(); y = 20; }
+                doc.setFontSize(11);
+                doc.text(`${i+1}. ${l.jenis || l.platform || '-'} - ${l.rekening || l.nomor || '-'}`, 14, y);
+                doc.setFontSize(9);
+                doc.text(` Status: ${l.status} | Kategori: ${l.kategori || '-'}`, 14, y+5);
+                doc.text(` Pelapor: ${l.pelapor || 'Anonim'} | Waktu: ${l.waktu? new Date(l.waktu).toLocaleDateString('id-ID') : '-'}`, 14, y+10);
+                const kronologi = doc.splitTextToSize(` Kronologi: ${l.kronologi || '-'}`, 180);
+                doc.text(kronologi, 14, y+15);
+                y += 15 + (kronologi.length * 4);
+            });
+
+            const tglFile = new Date().toLocaleDateString('id-ID').replace(/\//g, '-');
+            doc.save(`Laporan_Massal_${modeTab}_${tglFile}.pdf`);
+            alert(`PDF ${modeTab} berhasil di download! Total: ${dataFilter.length} data`);
         }
 
         loadLaporan();
