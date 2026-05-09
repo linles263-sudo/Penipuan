@@ -7,36 +7,49 @@
     <style>
         body { font-family: Arial, sans-serif; background: #111; color: #fff; padding: 10px; }
         h1 { color: #00ff88; text-align: center; }
-  .tab { display: flex; gap: 10px; margin-bottom: 15px; }
-  .tab button { flex: 1; padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
-  .tab.active { background: #00ff88; color: #000; }
-  .tab.inactive { background: #333; color: #fff; }
-  .export-bar { display: flex; gap: 10px; margin-bottom: 15px; }
-  .export-bar button { flex:1; padding:12px; border:none; border-radius:5px; font-weight:bold; cursor:pointer; }
-  .btn-excel { background:#00ff88; color:#000; }
-  .btn-pdf { background:#ff4444; color:#fff; }
-  .laporan { background: #222; border: 1px solid #444; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
-  .laporan div { margin: 6px 0; }
-  .nomor { font-size: 20px; color: #ff4444; font-weight: bold; }
-  .label { color: #00ff88; font-weight: bold; }
-  .kronologi { margin: 10px 0; color: #ccc; }
+ .tab { display: flex; gap: 10px; margin-bottom: 15px; }
+ .tab button { flex: 1; padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+ .tab.active { background: #00ff88; color: #000; }
+ .tab.inactive { background: #333; color: #fff; }
+ .export-bar { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+ .export-bar select { flex:1; padding:12px; border:none; border-radius:5px; font-weight:bold; background:#333; color:#fff; }
+ .export-bar.btn-wrap { display: flex; gap: 10px; }
+ .export-bar button { flex:1; padding:12px; border:none; border-radius:5px; font-weight:bold; cursor:pointer; }
+ .btn-excel { background:#00ff88; color:#000; }
+ .btn-pdf { background:#ff4444; color:#fff; }
+ .laporan { background: #222; border: 1px solid #444; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+ .laporan div { margin: 6px 0; }
+ .nomor { font-size: 20px; color: #ff4444; font-weight: bold; }
+ .label { color: #00ff88; font-weight: bold; }
+ .kronologi { margin: 10px 0; color: #ccc; }
         img { max-width: 100%; border-radius: 5px; margin-top: 10px; border: 2px solid #00ff88; }
         button { padding: 10px 15px; border: none; border-radius: 5px; font-weight: bold; margin-right: 10px; cursor: pointer; }
-  .acc { background: #00ff88; color: #000; }
-  .tolak { background: #ff4444; color: #fff; }
-  .loading { text-align: center; font-size: 18px; }
-  .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; background: #444; }
-  .verified { border-left: 4px solid #00ff88; }
-  .pending { border-left: 4px solid #ffaa00; }
+ .acc { background: #00ff88; color: #000; }
+ .tolak { background: #ff4444; color: #fff; }
+ .loading { text-align: center; font-size: 18px; }
+ .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; background: #444; }
+ .verified { border-left: 4px solid #00ff88; }
+ .pending { border-left: 4px solid #ffaa00; }
     </style>
 </head>
 <body>
     <h1>🛡️ DASHBOARD HOKAGE 🛡️</h1>
 
-    <!-- TOMBOL EXPORT BARU PROF -->
+    <!-- TOMBOL EXPORT + FILTER PLATFORM BARU -->
     <div class="export-bar">
-        <button class="btn-excel" onclick="downloadExcel()">📥 DOWNLOAD EXCEL</button>
-        <button class="btn-pdf" onclick="downloadPDF()">📄 DOWNLOAD PDF</button>
+        <select id="filterPlatform">
+            <option value="semua">📋 Export Semua Platform</option>
+            <option value="GoPay">🟢 Export GoPay Saja</option>
+            <option value="DANA">🔵 Export DANA Saja</option>
+            <option value="ShopeePay">🟠 Export ShopeePay Saja</option>
+            <option value="OVO">💜 Export OVO Saja</option>
+            <option value="LinkAja">🔴 Export LinkAja Saja</option>
+            <option value="Bank">🏦 Export Bank Saja</option>
+        </select>
+        <div class="btn-wrap">
+            <button class="btn-excel" onclick="downloadExcel()">📥 DOWNLOAD EXCEL</button>
+            <button class="btn-pdf" onclick="downloadPDF()">📄 DOWNLOAD PDF</button>
+        </div>
     </div>
 
     <div class="tab">
@@ -69,7 +82,7 @@
         const db = getDatabase(app);
         const listLaporan = document.getElementById('list-laporan');
         let modeTab = 'pending';
-        let semuaDataLaporan = []; // BUAT NYIMPEN DATA GLOBAL PROF
+        let semuaDataLaporan = [];
 
         const passwordAsli = "hokage2026";
         const password = prompt("Masukin Password Hokage:");
@@ -90,15 +103,14 @@
             const laporanRef = ref(db, 'laporan');
             onValue(laporanRef, (snapshot) => {
                 listLaporan.innerHTML = '';
-                semuaDataLaporan = []; // RESET DULU TIAP LOAD
+                semuaDataLaporan = [];
                 let adaData = false;
 
                 snapshot.forEach((data) => {
                     const key = data.key;
                     const laporan = data.val();
-                    semuaDataLaporan.push({...laporan, id: key}); // SIMPEN KE ARRAY GLOBAL
+                    semuaDataLaporan.push({...laporan, id: key});
 
-                    // Filter sesuai tab
                     if (modeTab === 'pending' && laporan.status!== 'pending') return;
                     if (modeTab === 'semua' &&!laporan.status) return;
 
@@ -112,7 +124,7 @@
                     div.className = `laporan ${laporan.status}`;
                     div.innerHTML = `
                         <div class="nomor">📱 ${laporan.rekening || laporan.nomor || 'Nomor/Rek kosong'}</div>
-                        <div><span class="label">Status:</span> <span class="badge">${laporan.status.toUpperCase()}</span></div>
+                        <div><span class="label">Status:</span> <span class="badge">${(laporan.status || 'verified').toUpperCase()}</span></div>
                         <div><span class="label">Kategori:</span> <span class="badge">${laporan.kategori || '-'}</span></div>
                         <div><span class="label">Platform:</span> ${laporan.jenis || laporan.namaPlatform || laporan.platform || laporan.bank || '-'}</div>
                         <div><span class="label">No HP / Rekening:</span> ${laporan.rekening || laporan.nomor || '-'}</div>
@@ -151,19 +163,35 @@
             }
         }
 
-        // FUNCTION DOWNLOAD EXCEL PROF
-        window.downloadExcel = function() {
-            // Filter data sesuai tab yg lagi dibuka
-            const dataFilter = semuaDataLaporan.filter(l => {
+        // FUNCTION FILTER HOKAGE
+        function getFilteredData() {
+            const filterValue = document.getElementById('filterPlatform').value;
+
+            let dataFilter = semuaDataLaporan.filter(l => {
                 if (modeTab === 'pending') return l.status === 'pending';
-                return true; // tab semua = ambil semua
+                return true;
             });
 
-            if(dataFilter.length === 0) return alert('Data kosong Prof! ACC dulu atau ganti tab.');
+            if (filterValue!== 'semua') {
+                dataFilter = dataFilter.filter(l => {
+                    const platform = (l.jenis || l.namaPlatform || l.platform || l.bank || '').toLowerCase();
+                    if (filterValue === 'Bank') {
+                        return platform.includes('bank') || platform.includes('bri') || platform.includes('bca') || platform.includes('mandiri') || platform.includes('bni');
+                    }
+                    return platform.includes(filterValue.toLowerCase());
+                });
+            }
+            return { dataFilter, filterValue };
+        }
+
+        // FUNCTION DOWNLOAD EXCEL FIXED
+        window.downloadExcel = function() {
+            const { dataFilter, filterValue } = getFilteredData();
+            if(dataFilter.length === 0) return alert(`Data ${filterValue} kosong Prof!`);
 
             const dataExport = dataFilter.map(l => ({
-                'Status': l.status,
-                'Kategori': l.kategori || '-',
+                'Status': l.status || 'verified',
+                'Kategori': l.kategori || l.jenis || l.platform || l.bank || 'Lainnya',
                 'Platform': l.jenis || l.namaPlatform || l.platform || l.bank || '-',
                 'Nomor/Rekening': l.rekening || l.nomor || '-',
                 'Pelapor': l.pelapor || 'Anonim',
@@ -176,25 +204,21 @@
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Data Penipu");
             const tgl = new Date().toLocaleDateString('id-ID').replace(/\//g, '-');
-            XLSX.writeFile(wb, `Laporan_Penipu_${modeTab}_${tgl}.xlsx`);
-            alert(`Excel ${modeTab} berhasil di download! Total: ${dataFilter.length} data`);
+            XLSX.writeFile(wb, `Laporan_${filterValue}_${modeTab}_${tgl}.xlsx`);
+            alert(`Excel ${filterValue} berhasil di download! Total: ${dataFilter.length} data`);
         }
 
-        // FUNCTION DOWNLOAD PDF PROF
+        // FUNCTION DOWNLOAD PDF FIXED
         window.downloadPDF = function() {
-            const dataFilter = semuaDataLaporan.filter(l => {
-                if (modeTab === 'pending') return l.status === 'pending';
-                return true;
-            });
-
-            if(dataFilter.length === 0) return alert('Data kosong Prof!');
+            const { dataFilter, filterValue } = getFilteredData();
+            if(dataFilter.length === 0) return alert(`Data ${filterValue} kosong Prof!`);
 
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             const tgl = new Date().toLocaleString('id-ID');
 
             doc.setFontSize(16);
-            doc.text("LAPORAN MASSAL REKENING PENIPU", 14, 20);
+            doc.text(`LAPORAN MASSAL - ${filterValue.toUpperCase()}`, 14, 20);
             doc.setFontSize(10);
             doc.text(`Tab: ${modeTab.toUpperCase()} | Total: ${dataFilter.length} Laporan`, 14, 28);
             doc.text(`Dicetak: ${tgl} | CekPenipuan.id`, 14, 34);
@@ -202,22 +226,30 @@
             let y = 45;
             dataFilter.forEach((l, i) => {
                 if (y > 270) { doc.addPage(); y = 20; }
+
+                const nomor = l.rekening || l.nomor || '-';
+                const platform = l.jenis || l.namaPlatform || l.platform || l.bank || 'Tidak diketahui';
+                const status = l.status || 'verified';
+                const kategori = l.kategori || platform;
+                const pelapor = l.pelapor || 'Anonim';
+                const waktu = l.waktu? new Date(l.waktu).toLocaleDateString('id-ID') : '-';
+
                 doc.setFontSize(11);
-                doc.text(`${i+1}. ${l.jenis || l.platform || '-'} - ${l.rekening || l.nomor || '-'}`, 14, y);
+                doc.text(`${i+1}. ${nomor}`, 14, y);
                 doc.setFontSize(9);
-                doc.text(` Status: ${l.status} | Kategori: ${l.kategori || '-'}`, 14, y+5);
-                doc.text(` Pelapor: ${l.pelapor || 'Anonim'} | Waktu: ${l.waktu? new Date(l.waktu).toLocaleDateString('id-ID') : '-'}`, 14, y+10);
+                doc.text(` Status: ${status.toUpperCase()} | Kategori: ${kategori} | Platform: ${platform}`, 14, y+5);
+                doc.text(` Pelapor: ${pelapor} | Waktu: ${waktu}`, 14, y+10);
                 const kronologi = doc.splitTextToSize(` Kronologi: ${l.kronologi || '-'}`, 180);
                 doc.text(kronologi, 14, y+15);
                 y += 15 + (kronologi.length * 4);
             });
 
             const tglFile = new Date().toLocaleDateString('id-ID').replace(/\//g, '-');
-            doc.save(`Laporan_Massal_${modeTab}_${tglFile}.pdf`);
-            alert(`PDF ${modeTab} berhasil di download! Total: ${dataFilter.length} data`);
+            doc.save(`Laporan_${filterValue}_${modeTab}_${tglFile}.pdf`);
+            alert(`PDF ${filterValue} berhasil di download! Total: ${dataFilter.length} data`);
         }
 
         loadLaporan();
     </script>
 </body>
-    </html>
+                </html>
