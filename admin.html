@@ -7,29 +7,65 @@
     <style>
         body { font-family: Arial, sans-serif; background: #111; color: #fff; padding: 10px; }
         h1 { color: #00ff88; text-align: center; }
- .tab { display: flex; gap: 10px; margin-bottom: 15px; }
- .tab button { flex: 1; padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
- .tab.active { background: #00ff88; color: #000; }
- .tab.inactive { background: #333; color: #fff; }
- .export-bar { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
- .export-bar select { flex:1; padding:12px; border:none; border-radius:5px; font-weight:bold; background:#333; color:#fff; }
- .export-bar.btn-wrap { display: flex; gap: 10px; }
- .export-bar button { flex:1; padding:12px; border:none; border-radius:5px; font-weight:bold; cursor:pointer; }
- .btn-excel { background:#00ff88; color:#000; }
- .btn-pdf { background:#ff4444; color:#fff; }
- .laporan { background: #222; border: 1px solid #444; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
- .laporan div { margin: 6px 0; }
- .nomor { font-size: 20px; color: #ff4444; font-weight: bold; }
- .label { color: #00ff88; font-weight: bold; }
- .kronologi { margin: 10px 0; color: #ccc; }
+.tab { display: flex; gap: 10px; margin-bottom: 15px; }
+.tab button { flex: 1; padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+.tab.active { background: #00ff88; color: #000; }
+.tab.inactive { background: #333; color: #fff; }
+.export-bar { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+.export-bar select { flex:1; padding:12px; border:none; border-radius:5px; font-weight:bold; background:#333; color:#fff; }
+.btn-wrap { display: flex; gap: 10px; }
+.export-bar button { flex:1; padding:12px; border:none; border-radius:5px; font-weight:bold; cursor:pointer; }
+.btn-excel { background:#00ff88; color:#000; }
+.btn-pdf { background:#ff4444; color:#fff; }
+.laporan {
+     background: #222;
+     border: 1px solid #444;
+     border-radius: 8px;
+     padding: 15px;
+     margin-bottom: 15px;
+     text-align: left;
+ }
+.laporan.row {
+     display: flex;
+     margin: 8px 0;
+     align-items: flex-start;
+ }
+.laporan.label {
+     color: #00ff88;
+     font-weight: bold;
+     min-width: 140px;
+     flex-shrink: 0;
+ }
+.laporan.value {
+     color: #fff;
+     flex: 1;
+     word-break: break-word;
+ }
+.nomor {
+     font-size: 22px;
+     color: #ff4444;
+     font-weight: bold;
+     text-align: center;
+     margin-bottom: 12px;
+     padding-bottom: 10px;
+     border-bottom: 1px solid #444;
+ }
+.kronologi {
+     margin: 10px 0;
+     color: #ccc;
+     background: #1a1a1a;
+     padding: 10px;
+     border-radius: 5px;
+     border-left: 3px solid #00ff88;
+ }
         img { max-width: 100%; border-radius: 5px; margin-top: 10px; border: 2px solid #00ff88; }
         button { padding: 10px 15px; border: none; border-radius: 5px; font-weight: bold; margin-right: 10px; cursor: pointer; }
- .acc { background: #00ff88; color: #000; }
- .tolak { background: #ff4444; color: #fff; }
- .loading { text-align: center; font-size: 18px; }
- .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; background: #444; }
- .verified { border-left: 4px solid #00ff88; }
- .pending { border-left: 4px solid #ffaa00; }
+.acc { background: #00ff88; color: #000; }
+.tolak { background: #ff4444; color: #fff; }
+.loading { text-align: center; font-size: 18px; }
+.badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; background: #444; }
+.verified { border-left: 4px solid #00ff88; }
+.pending { border-left: 4px solid #ffaa00; }
     </style>
 </head>
 <body>
@@ -124,14 +160,15 @@
                     div.className = `laporan ${laporan.status}`;
                     div.innerHTML = `
                         <div class="nomor">📱 ${laporan.rekening || laporan.nomor || 'Nomor/Rek kosong'}</div>
-                        <div><span class="label">Status:</span> <span class="badge">${(laporan.status || 'verified').toUpperCase()}</span></div>
-                        <div><span class="label">Kategori:</span> <span class="badge">${laporan.kategori || '-'}</span></div>
-                        <div><span class="label">Platform:</span> ${laporan.jenis || laporan.namaPlatform || laporan.platform || laporan.bank || '-'}</div>
-                        <div><span class="label">No HP / Rekening:</span> ${laporan.rekening || laporan.nomor || '-'}</div>
-                        <div class="kronologi"><span class="label">Kronologi:</span> ${laporan.kronologi || '-'}</div>
-                        <div><span class="label">Pelapor:</span> ${laporan.pelapor || 'Anonim'}</div>
-                        <div><span class="label">Waktu Lapor:</span> ${laporan.waktu? new Date(laporan.waktu).toLocaleString('id-ID') : '-'}</div>
-                        <div><span class="label">Bukti Chat:</span><br>${fotoHTML}</div>
+                        <div class="row"><span class="label">Status:</span> <span class="value"><span class="badge">${(laporan.status || 'verified').toUpperCase()}</span></span></div>
+                        <div class="row"><span class="label">Kategori:</span> <span class="value"><span class="badge">${laporan.kategori || 'Lainnya'}</span></span></div>
+                        <div class="row"><span class="label">Platform:</span> <span class="value">${laporan.jenis || laporan.namaPlatform || laporan.platform || laporan.bank || '-'}</span></div>
+                        <div class="row"><span class="label">No HP / Rekening:</span> <span class="value">${laporan.rekening || laporan.nomor || '-'}</span></div>
+                        <div class="row"><span class="label">Kronologi:</span> <span class="value">${laporan.kronologi || '-'}</span></div>
+                        <div class="row"><span class="label">Pelapor:</span> <span class="value">${laporan.pelapor || 'Anonim'}</span></div>
+                        <div class="row"><span class="label">Waktu Lapor:</span> <span class="value">${laporan.waktu? new Date(laporan.waktu).toLocaleString('id-ID') : '-'}</span></div>
+                        <div class="row"><span class="label">Bukti Chat:</span></div>
+                        ${fotoHTML}
                         <br>
                         ${laporan.status === 'pending'? `
                             <button class="acc" onclick="updateStatus('${key}', 'verified')">✅ ACC JADI VERIFIED</button>
@@ -252,4 +289,4 @@
         loadLaporan();
     </script>
 </body>
-                </html>
+    </html>
