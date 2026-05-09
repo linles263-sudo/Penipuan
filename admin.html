@@ -7,17 +7,17 @@
     <style>
         body { font-family: Arial, sans-serif; background: #111; color: #fff; padding: 10px; }
         h1 { color: #00ff88; text-align: center; }
-      .laporan { background: #222; border: 1px solid #444; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
-      .laporan div { margin: 6px 0; }
-      .nomor { font-size: 20px; color: #ff4444; font-weight: bold; }
-      .label { color: #00ff88; font-weight: bold; }
-      .kronologi { margin: 10px 0; color: #ccc; }
+     .laporan { background: #222; border: 1px solid #444; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+     .laporan div { margin: 6px 0; }
+     .nomor { font-size: 20px; color: #ff4444; font-weight: bold; }
+     .label { color: #00ff88; font-weight: bold; }
+     .kronologi { margin: 10px 0; color: #ccc; }
         img { max-width: 100%; border-radius: 5px; margin-top: 10px; border: 2px solid #00ff88; }
         button { padding: 10px 15px; border: none; border-radius: 5px; font-weight: bold; margin-right: 10px; cursor: pointer; }
-      .acc { background: #00ff88; color: #000; }
-      .tolak { background: #ff4444; color: #fff; }
-      .loading { text-align: center; font-size: 18px; }
-      .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; background: #444; }
+     .acc { background: #00ff88; color: #000; }
+     .tolak { background: #ff4444; color: #fff; }
+     .loading { text-align: center; font-size: 18px; }
+     .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; background: #444; }
     </style>
 </head>
 <body>
@@ -70,9 +70,9 @@
                     const div = document.createElement('div');
                     div.className = 'laporan';
                     div.innerHTML = `
-                        <div class="nomor">📱 ${laporan.nomor || laporan.rekening || 'Nomor/Rek kosong'}</div>
+                        <div class="nomor">📱 ${laporan.rekening || laporan.nomor || 'Nomor/Rek kosong'}</div>
                         <div><span class="label">Kategori:</span> <span class="badge">${laporan.kategori || '-'}</span></div>
-                        <div><span class="label">Platform:</span> ${laporan.platform || '-'}</div>
+                        <div><span class="label">Platform:</span> ${laporan.namaPlatform || laporan.platform || laporan.bank || '-'}</div>
                         <div><span class="label">No HP / Rekening:</span> ${laporan.rekening || laporan.nomor || '-'}</div>
                         <div class="kronologi"><span class="label">Kronologi:</span> ${laporan.kronologi || '-'}</div>
                         <div><span class="label">Waktu Lapor:</span> ${laporan.waktu? new Date(laporan.waktu).toLocaleString('id-ID') : '-'}</div>
