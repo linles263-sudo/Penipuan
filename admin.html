@@ -7,22 +7,34 @@
     <style>
         body { font-family: Arial, sans-serif; background: #111; color: #fff; padding: 10px; }
         h1 { color: #00ff88; text-align: center; }
-     .laporan { background: #222; border: 1px solid #444; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
-     .laporan div { margin: 6px 0; }
-     .nomor { font-size: 20px; color: #ff4444; font-weight: bold; }
-     .label { color: #00ff88; font-weight: bold; }
-     .kronologi { margin: 10px 0; color: #ccc; }
+    .tab { display: flex; gap: 10px; margin-bottom: 15px; }
+    .tab button { flex: 1; padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+    .tab.active { background: #00ff88; color: #000; }
+    .tab.inactive { background: #333; color: #fff; }
+    .laporan { background: #222; border: 1px solid #444; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+    .laporan div { margin: 6px 0; }
+    .nomor { font-size: 20px; color: #ff4444; font-weight: bold; }
+    .label { color: #00ff88; font-weight: bold; }
+    .kronologi { margin: 10px 0; color: #ccc; }
         img { max-width: 100%; border-radius: 5px; margin-top: 10px; border: 2px solid #00ff88; }
         button { padding: 10px 15px; border: none; border-radius: 5px; font-weight: bold; margin-right: 10px; cursor: pointer; }
-     .acc { background: #00ff88; color: #000; }
-     .tolak { background: #ff4444; color: #fff; }
-     .loading { text-align: center; font-size: 18px; }
-     .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; background: #444; }
+    .acc { background: #00ff88; color: #000; }
+    .tolak { background: #ff4444; color: #fff; }
+    .loading { text-align: center; font-size: 18px; }
+    .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; background: #444; }
+    .verified { border-left: 4px solid #00ff88; }
+    .pending { border-left: 4px solid #ffaa00; }
     </style>
 </head>
 <body>
     <h1>🛡️ DASHBOARD HOKAGE 🛡️</h1>
-    <div id="list-laporan" class="loading">Loading laporan pending...</div>
+
+    <div class="tab">
+        <button id="tabPending" class="active" onclick="gantiTab('pending')">⏳ PENDING</button>
+        <button id="tabSemua" class="inactive" onclick="gantiTab('semua')">📋 SEMUA LAPORAN</button>
+    </div>
+
+    <div id="list-laporan" class="loading">Loading laporan...</div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
@@ -42,6 +54,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const listLaporan = document.getElementById('list-laporan');
+        let modeTab = 'pending';
 
         const passwordAsli = "hokage2026";
         const password = prompt("Masukin Password Hokage:");
@@ -51,26 +64,38 @@
             throw new Error("Password salah");
         }
 
-        const laporanRef = ref(db, 'laporan');
-        onValue(laporanRef, (snapshot) => {
-            listLaporan.innerHTML = '';
-            let adaPending = false;
+        window.gantiTab = function(tab) {
+            modeTab = tab;
+            document.getElementById('tabPending').className = tab === 'pending'? 'active' : 'inactive';
+            document.getElementById('tabSemua').className = tab === 'semua'? 'active' : 'inactive';
+            loadLaporan();
+        }
 
-            snapshot.forEach((data) => {
-                const key = data.key;
-                const laporan = data.val();
+        function loadLaporan() {
+            const laporanRef = ref(db, 'laporan');
+            onValue(laporanRef, (snapshot) => {
+                listLaporan.innerHTML = '';
+                let adaData = false;
 
-                if (laporan.status === 'pending') {
-                    adaPending = true;
+                snapshot.forEach((data) => {
+                    const key = data.key;
+                    const laporan = data.val();
+
+                    // Filter sesuai tab
+                    if (modeTab === 'pending' && laporan.status!== 'pending') return;
+                    if (modeTab === 'semua' &&!laporan.status) return;
+
+                    adaData = true;
                     let fotoHTML = '<i>Tidak ada bukti foto</i>';
                     if (laporan.bukti && laporan.bukti[0]) {
                         fotoHTML = `<img src="${laporan.bukti[0]}" alt="Bukti Chat" loading="lazy">`;
                     }
 
                     const div = document.createElement('div');
-                    div.className = 'laporan';
+                    div.className = `laporan ${laporan.status}`;
                     div.innerHTML = `
                         <div class="nomor">📱 ${laporan.rekening || laporan.nomor || 'Nomor/Rek kosong'}</div>
+                        <div><span class="label">Status:</span> <span class="badge">${laporan.status.toUpperCase()}</span></div>
                         <div><span class="label">Kategori:</span> <span class="badge">${laporan.kategori || '-'}</span></div>
                         <div><span class="label">Platform:</span> ${laporan.namaPlatform || laporan.platform || laporan.bank || '-'}</div>
                         <div><span class="label">No HP / Rekening:</span> ${laporan.rekening || laporan.nomor || '-'}</div>
@@ -78,36 +103,37 @@
                         <div><span class="label">Waktu Lapor:</span> ${laporan.waktu? new Date(laporan.waktu).toLocaleString('id-ID') : '-'}</div>
                         <div><span class="label">Bukti Chat:</span><br>${fotoHTML}</div>
                         <br>
-                        <button class="acc">✅ ACC JADI VERIFIED</button>
-                        <button class="tolak">❌ TOLAK/HAPUS</button>
+                        ${laporan.status === 'pending'? `
+                            <button class="acc" onclick="updateStatus('${key}', 'verified')">✅ ACC JADI VERIFIED</button>
+                            <button class="tolak" onclick="hapusLaporan('${key}')">❌ TOLAK/HAPUS</button>
+                        ` : `
+                            <button class="tolak" onclick="hapusLaporan('${key}')">🗑️ HAPUS DARI DATABASE</button>
+                        `}
                     `;
-
-                    div.querySelector('.acc').onclick = () => updateStatus(key, 'verified');
-                    div.querySelector('.tolak').onclick = () => hapusLaporan(key);
                     listLaporan.appendChild(div);
+                });
+
+                if (!adaData) {
+                    listLaporan.innerHTML = `<p class="loading">${modeTab === 'pending'? '✅ Semua laporan udah di-ACC' : '📭 Belum ada laporan masuk'}</p>`;
                 }
             });
+        }
 
-            if (!adaPending) {
-                listLaporan.innerHTML = '<p class="loading">✅ Semua laporan udah di-ACC. Aman Prof!</p>';
-            }
-        }, (error) => {
-            listLaporan.innerHTML = `<p style="color:#ff4444">Error: ${error.message}</p>`;
-        });
-
-        function updateStatus(key, statusBaru) {
+        window.updateStatus = function(key, statusBaru) {
             if (confirm('Yakin mau ACC laporan ini jadi VERIFIED?')) {
                 update(ref(db, 'laporan/' + key), { status: statusBaru });
                 alert('Berhasil di-ACC! Auto masuk web utama.');
             }
         }
 
-        function hapusLaporan(key) {
+        window.hapusLaporan = function(key) {
             if (confirm('Yakin mau HAPUS laporan ini? Data hilang permanen.')) {
                 remove(ref(db, 'laporan/' + key));
-                alert('Laporan palsu berhasil dihapus.');
+                alert('Laporan berhasil dihapus.');
             }
         }
+
+        loadLaporan();
     </script>
 </body>
-</html>
+    </html>
