@@ -114,7 +114,9 @@
     <input type="text" id="inputLapor" placeholder="Pilih kategori dulu">
 
     <label>Jumlah Kerugian (Rp):</label>
-    <input type="number" id="inputKerugian" placeholder="Contoh: 500000, kosongin kalo ga rugi" min="0">
+    <input type="text" id="inputKerugian" placeholder="Contoh: 500000"
+           oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+    <p class="note">Ketik angka aja tanpa titik/koma. Contoh: 500000 untuk Rp 500.000</p>
 
     <label>Kronologi Kejadian:</label>
     <textarea id="inputKronologi" placeholder="Modus apa, kapan kejadian, kerugian berapa" rows="3"></textarea>
@@ -269,7 +271,7 @@
       const kronologi = document.getElementById('inputKronologi').value.trim();
       const kategori = document.getElementById('inputKategori').value;
       const jenis = document.getElementById('inputJenis').value;
-      const kerugian = document.getElementById('inputKerugian').value;
+      const kerugian = document.getElementById('inputKerugian').value.replace(/\./g, ''); // BUANG TITIK OTOMATIS
       const files = document.getElementById('inputBukti').files;
       const btn = event.target;
 
@@ -322,11 +324,11 @@
           kronologi: kronologi,
           kategori: kategori,
           jenis: jenis,
-          kerugian: Number(kerugian) || 0, // INI YANG BIKIN AUTO KEITUNG
+          kerugian: Number(kerugian) || 0,
           waktu: Date.now(),
           pelapor: 'Anonim',
           bukti: buktiBase64,
-          status: 'pending' // NANTI LU APPROVE DI ADMIN.HTML JADI verified
+          status: 'pending'
         });
 
         alert('✅ BERHASIL! Laporan + bukti udah masuk server. 100% Gratis tanpa billing.');
