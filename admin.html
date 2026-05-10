@@ -7,65 +7,65 @@
     <style>
         body { font-family: Arial, sans-serif; background: #111; color: #fff; padding: 10px; }
         h1 { color: #00ff88; text-align: center; }
-.tab { display: flex; gap: 10px; margin-bottom: 15px; }
-.tab button { flex: 1; padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
-.tab.active { background: #00ff88; color: #000; }
-.tab.inactive { background: #333; color: #fff; }
-.export-bar { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
-.export-bar select { flex:1; padding:12px; border:none; border-radius:5px; font-weight:bold; background:#333; color:#fff; }
-.btn-wrap { display: flex; gap: 10px; }
-.export-bar button { flex:1; padding:12px; border:none; border-radius:5px; font-weight:bold; cursor:pointer; }
-.btn-excel { background:#00ff88; color:#000; }
-.btn-pdf { background:#ff4444; color:#fff; }
-.laporan {
-     background: #222;
-     border: 1px solid #444;
-     border-radius: 8px;
-     padding: 15px;
-     margin-bottom: 15px;
-     text-align: left;
- }
-.laporan.row {
-     display: flex;
-     margin: 8px 0;
-     align-items: flex-start;
- }
-.laporan.label {
-     color: #00ff88;
-     font-weight: bold;
-     min-width: 140px;
-     flex-shrink: 0;
- }
-.laporan.value {
-     color: #fff;
-     flex: 1;
-     word-break: break-word;
- }
-.nomor {
-     font-size: 22px;
-     color: #ff4444;
-     font-weight: bold;
-     text-align: center;
-     margin-bottom: 12px;
-     padding-bottom: 10px;
-     border-bottom: 1px solid #444;
- }
-.kronologi {
-     margin: 10px 0;
-     color: #ccc;
-     background: #1a1a1a;
-     padding: 10px;
-     border-radius: 5px;
-     border-left: 3px solid #00ff88;
- }
+       .tab { display: flex; gap: 10px; margin-bottom: 15px; }
+       .tab button { flex: 1; padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+       .tab.active { background: #00ff88; color: #000; }
+       .tab.inactive { background: #333; color: #fff; }
+       .export-bar { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+       .export-bar select { flex:1; padding:12px; border:none; border-radius:5px; font-weight:bold; background:#333; color:#fff; }
+       .btn-wrap { display: flex; gap: 10px; }
+       .export-bar button { flex:1; padding:12px; border:none; border-radius:5px; font-weight:bold; cursor:pointer; }
+       .btn-excel { background:#00ff88; color:#000; }
+       .btn-pdf { background:#ff4444; color:#fff; }
+       .laporan {
+             background: #222;
+             border: 1px solid #444;
+             border-radius: 8px;
+             padding: 15px;
+             margin-bottom: 15px;
+             text-align: left;
+         }
+       .laporan.row {
+             display: flex;
+             margin: 8px 0;
+             align-items: flex-start;
+         }
+       .laporan.label {
+             color: #00ff88;
+             font-weight: bold;
+             min-width: 140px;
+             flex-shrink: 0;
+         }
+       .laporan.value {
+             color: #fff;
+             flex: 1;
+             word-break: break-word;
+         }
+       .nomor {
+             font-size: 22px;
+             color: #ff4444;
+             font-weight: bold;
+             text-align: center;
+             margin-bottom: 12px;
+             padding-bottom: 10px;
+             border-bottom: 1px solid #444;
+         }
+       .kronologi {
+             margin: 10px 0;
+             color: #ccc;
+             background: #1a1a1a;
+             padding: 10px;
+             border-radius: 5px;
+             border-left: 3px solid #00ff88;
+         }
         img { max-width: 100%; border-radius: 5px; margin-top: 10px; border: 2px solid #00ff88; }
         button { padding: 10px 15px; border: none; border-radius: 5px; font-weight: bold; margin-right: 10px; cursor: pointer; }
-.acc { background: #00ff88; color: #000; }
-.tolak { background: #ff4444; color: #fff; }
-.loading { text-align: center; font-size: 18px; }
-.badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; background: #444; }
-.verified { border-left: 4px solid #00ff88; }
-.pending { border-left: 4px solid #ffaa00; }
+       .acc { background: #00ff88; color: #000; }
+       .tolak { background: #ff4444; color: #fff; }
+       .loading { text-align: center; font-size: 18px; }
+       .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; background: #444; }
+       .verified { border-left: 4px solid #00ff88; }
+       .pending { border-left: 4px solid #ffaa00; }
     </style>
 </head>
 <body>
@@ -234,6 +234,7 @@
                 'Pelapor': l.pelapor || 'Anonim',
                 'Kronologi': l.kronologi || '-',
                 'Waktu Lapor': l.waktu? new Date(l.waktu).toLocaleString('id-ID') : '-',
+                'Link Bukti': l.bukti && l.bukti[0]? l.bukti[0] : '-',
                 'ID Laporan': l.id
             }));
 
@@ -245,8 +246,8 @@
             alert(`Excel ${filterValue} berhasil di download! Total: ${dataFilter.length} data`);
         }
 
-        // FUNCTION DOWNLOAD PDF FIXED
-        window.downloadPDF = function() {
+        // FUNCTION DOWNLOAD PDF + BUKTI GAMBAR - UDAH DIUPGRADE
+        window.downloadPDF = async function() {
             const { dataFilter, filterValue } = getFilteredData();
             if(dataFilter.length === 0) return alert(`Data ${filterValue} kosong Prof!`);
 
@@ -255,14 +256,16 @@
             const tgl = new Date().toLocaleString('id-ID');
 
             doc.setFontSize(16);
-            doc.text(`LAPORAN MASSAL - ${filterValue.toUpperCase()}`, 14, 20);
+            doc.text(`LAPORAN SATPAM DIGITAL - ${filterValue.toUpperCase()}`, 14, 20);
             doc.setFontSize(10);
             doc.text(`Tab: ${modeTab.toUpperCase()} | Total: ${dataFilter.length} Laporan`, 14, 28);
-            doc.text(`Dicetak: ${tgl} | CekPenipuan.id`, 14, 34);
+            doc.text(`Dicetak: ${tgl}`, 14, 34);
 
             let y = 45;
-            dataFilter.forEach((l, i) => {
-                if (y > 270) { doc.addPage(); y = 20; }
+
+            for (let i = 0; i < dataFilter.length; i++) {
+                const l = dataFilter[i];
+                if (y > 250) { doc.addPage(); y = 20; }
 
                 const nomor = l.rekening || l.nomor || '-';
                 const platform = l.jenis || l.namaPlatform || l.platform || l.bank || 'Tidak diketahui';
@@ -272,21 +275,58 @@
                 const waktu = l.waktu? new Date(l.waktu).toLocaleDateString('id-ID') : '-';
 
                 doc.setFontSize(11);
+                doc.setTextColor(255, 68, 68);
                 doc.text(`${i+1}. ${nomor}`, 14, y);
+                doc.setTextColor(0, 0, 0);
                 doc.setFontSize(9);
                 doc.text(` Status: ${status.toUpperCase()} | Kategori: ${kategori} | Platform: ${platform}`, 14, y+5);
                 doc.text(` Pelapor: ${pelapor} | Waktu: ${waktu}`, 14, y+10);
                 const kronologi = doc.splitTextToSize(` Kronologi: ${l.kronologi || '-'}`, 180);
                 doc.text(kronologi, 14, y+15);
                 y += 15 + (kronologi.length * 4);
-            });
+
+                // AMBIL & TEMPEL BUKTI GAMBAR
+                if (l.bukti && l.bukti[0]) {
+                    try {
+                        doc.setFontSize(9);
+                        doc.setTextColor(0, 255, 136);
+                        doc.text(`Bukti Transfer:`, 14, y);
+                        doc.setTextColor(0, 0, 0);
+                        y += 5;
+
+                        const imgRes = await fetch(l.bukti[0]);
+                        const imgBlob = await imgRes.blob();
+                        const imgBase64 = await blobToBase64(imgBlob);
+
+                        doc.addImage(imgBase64, 'JPEG', 14, y, 180, 80);
+                        y += 85;
+                    } catch (err) {
+                        doc.text(`Gagal load bukti. Cek Firebase Storage Rules.`, 14, y);
+                        y += 5;
+                        console.log('Error gambar:', err);
+                    }
+                }
+                y += 8;
+                doc.setDrawColor(200, 200, 200);
+                doc.line(14, y, 196, y);
+                y += 5;
+            }
 
             const tglFile = new Date().toLocaleDateString('id-ID').replace(/\//g, '-');
             doc.save(`Laporan_${filterValue}_${modeTab}_${tglFile}.pdf`);
             alert(`PDF ${filterValue} berhasil di download! Total: ${dataFilter.length} data`);
         }
 
+        // Helper: Convert blob ke base64
+        function blobToBase64(blob) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.readAsDataURL(blob);
+            });
+        }
+
         loadLaporan();
     </script>
 </body>
-    </html>
+                </html>
