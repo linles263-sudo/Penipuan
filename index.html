@@ -36,29 +36,29 @@
 
   <style>
     body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f5f5f5; }
- .box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+.box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
     h1 { text-align: center; color: #2c3e50; margin-bottom: 5px; }
- .sub { text-align: center; color: #7f8c8d; font-size: 14px; margin-bottom: 20px; }
+.sub { text-align: center; color: #7f8c8d; font-size: 14px; margin-bottom: 20px; }
     input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
     label { font-weight: bold; color: #2c3e50; font-size: 14px; display: block; margin-top: 10px; }
     button { width: 100%; padding: 14px; background: #e74c3c; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
     button:hover { background: #c0392b; }
     button:disabled { background: #95a5a6; cursor: not-allowed; }
     #hasil { padding: 15px; border-radius: 8px; margin-top: 15px; font-weight: bold; text-align: center; }
- .aman { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
- .bahaya { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
- .loading { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
- .stats { display: flex; justify-content: space-around; text-align: center; }
- .stat h3 { margin: 0; color: #e74c3c; font-size: 24px; }
- .stat p { margin: 5px 0 0 0; color: #7f8c8d; font-size: 12px; }
- .bukti-img { width: 100%; max-width: 150px; margin: 5px; border-radius: 8px; border: 2px solid #ddd; }
- .bukti-container { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
- .note { font-size: 12px; color: #7f8c8d; margin: 5px 0; }
- .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
- .verified { background: #d4edda; color: #155724; }
- .pending { background: #fff3cd; color: #856404; }
- .row { display: flex; gap: 10px; }
- .row > div { flex: 1; }
+.aman { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.bahaya { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+.loading { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+.stats { display: flex; justify-content: space-around; text-align: center; }
+.stat h3 { margin: 0; color: #e74c3c; font-size: 24px; }
+.stat p { margin: 5px 0 0 0; color: #7f8c8d; font-size: 12px; }
+.bukti-img { width: 100%; max-width: 150px; margin: 5px; border-radius: 8px; border: 2px solid #ddd; }
+.bukti-container { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+.note { font-size: 12px; color: #7f8c8d; margin: 5px 0; }
+.status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+.verified { background: #d4edda; color: #155724; }
+.pending { background: #fff3cd; color: #856404; }
+.row { display: flex; gap: 10px; }
+.row > div { flex: 1; }
   </style>
 </head>
 <body>
@@ -113,6 +113,9 @@
     <label id="labelNomor">Nomor HP / Rekening Penipu:</label>
     <input type="text" id="inputLapor" placeholder="Pilih kategori dulu">
 
+    <label>Jumlah Kerugian (Rp):</label>
+    <input type="number" id="inputKerugian" placeholder="Contoh: 500000, kosongin kalo ga rugi" min="0">
+
     <label>Kronologi Kejadian:</label>
     <textarea id="inputKronologi" placeholder="Modus apa, kapan kejadian, kerugian berapa" rows="3"></textarea>
 
@@ -151,7 +154,6 @@
 
       snapshot.forEach((childSnapshot) => {
         const data = childSnapshot.val();
-        // Cuma itung yg status verified & ada field kerugian
         if(data.status === "verified") {
           totalVerified++;
           totalKerugian += Number(data.kerugian) || 0;
@@ -252,6 +254,7 @@
         Kategori: <b>${data.kategori || '-'}</b> <br>
         Platform: <b>${data.jenis || 'Tidak diketahui'}</b> <br>
         Status: ${statusText} <br>
+        Kerugian: <b>Rp ${(Number(data.kerugian) || 0).toLocaleString('id-ID')}</b> <br>
         Modus: ${data.kronologi} <br>
         Dilaporkan: ${new Date(data.waktu).toLocaleString('id-ID')} <br>
         ${buktiHtml}`;
@@ -266,6 +269,7 @@
       const kronologi = document.getElementById('inputKronologi').value.trim();
       const kategori = document.getElementById('inputKategori').value;
       const jenis = document.getElementById('inputJenis').value;
+      const kerugian = document.getElementById('inputKerugian').value;
       const files = document.getElementById('inputBukti').files;
       const btn = event.target;
 
@@ -318,16 +322,18 @@
           kronologi: kronologi,
           kategori: kategori,
           jenis: jenis,
+          kerugian: Number(kerugian) || 0, // INI YANG BIKIN AUTO KEITUNG
           waktu: Date.now(),
           pelapor: 'Anonim',
           bukti: buktiBase64,
-          status: 'pending'
+          status: 'pending' // NANTI LU APPROVE DI ADMIN.HTML JADI verified
         });
 
         alert('✅ BERHASIL! Laporan + bukti udah masuk server. 100% Gratis tanpa billing.');
         document.getElementById('inputLapor').value = '';
         document.getElementById('inputKronologi').value = '';
         document.getElementById('inputKategori').value = '';
+        document.getElementById('inputKerugian').value = '';
         document.getElementById('inputJenis').innerHTML = '<option value="">Pilih kategori dulu</option>';
         document.getElementById('inputBukti').value = '';
 
@@ -341,4 +347,4 @@
   </script>
 
 </body>
-      </html>
+  </html>
