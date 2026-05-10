@@ -77,8 +77,8 @@
         <p>Status Server</p>
       </div>
       <div class="stat">
-        <h3 id="totalRugi">0.0</h3>
-        <p>Juta Total Kerugian Dilaporkan</p>
+        <h3 id="totalRugi">0</h3>
+        <p>Total Kerugian Dilaporkan (Rp)</p>
       </div>
     </div>
   </div>
@@ -163,7 +163,7 @@
       });
 
       document.getElementById('totalLaporan').textContent = totalVerified;
-      document.getElementById('totalRugi').textContent = (totalKerugian / 1000000).toFixed(1);
+      document.getElementById('totalRugi').textContent = totalKerugian.toLocaleString('id-ID');
     });
 
     // DATA E-WALLET VS BANK
@@ -349,4 +349,4 @@
   </script>
 
 </body>
-  </html>
+      </html>
