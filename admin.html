@@ -7,18 +7,18 @@
     <style>
         body { font-family: Arial, sans-serif; background: #111; color: #fff; padding: 10px; }
         h1 { color: #00ff88; text-align: center; }
-.tab { display: flex; gap: 10px; margin-bottom: 15px; }
-.tab button { flex: 1; padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
-.tab.active { background: #00ff88; color: #000; }
-.tab.inactive { background: #333; color: #fff; }
-.export-bar { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
-.export-bar select { flex:1; padding:12px; border:none; border-radius:5px; font-weight:bold; background:#333; color:#fff; }
-.btn-wrap { display: flex; gap: 10px; flex-wrap: wrap; }
-.export-bar button { flex:1; padding:12px; border:none; border-radius:5px; font-weight:bold; cursor:pointer; min-width: 120px; }
-.btn-excel { background:#00ff88; color:#000; }
-.btn-pdf { background:#ff4444; color:#fff; }
-.btn-email { background:#0088ff; color:#fff; }
-.laporan {
+       .tab { display: flex; gap: 10px; margin-bottom: 15px; }
+       .tab button { flex: 1; padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+       .tab.active { background: #00ff88; color: #000; }
+       .tab.inactive { background: #333; color: #fff; }
+       .export-bar { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+       .export-bar select { flex:1; padding:12px; border:none; border-radius:5px; font-weight:bold; background:#333; color:#fff; }
+       .btn-wrap { display: flex; gap: 10px; flex-wrap: wrap; }
+       .export-bar button { flex:1; padding:12px; border:none; border-radius:5px; font-weight:bold; cursor:pointer; min-width: 120px; }
+       .btn-excel { background:#00ff88; color:#000; }
+       .btn-pdf { background:#ff4444; color:#fff; }
+       .btn-email { background:#0088ff; color:#fff; }
+       .laporan {
              background: #222;
              border: 1px solid #444;
              border-radius: 8px;
@@ -26,23 +26,23 @@
              margin-bottom: 15px;
              text-align: left;
          }
-.laporan.row {
+       .laporan.row {
              display: flex;
              margin: 8px 0;
              align-items: flex-start;
          }
-.laporan.label {
+       .laporan.label {
              color: #00ff88;
              font-weight: bold;
              min-width: 140px;
              flex-shrink: 0;
          }
-.laporan.value {
+       .laporan.value {
              color: #fff;
              flex: 1;
              word-break: break-word;
          }
-.nomor {
+       .nomor {
              font-size: 22px;
              color: #ff4444;
              font-weight: bold;
@@ -51,7 +51,7 @@
              padding-bottom: 10px;
              border-bottom: 1px solid #444;
          }
-.kronologi {
+       .kronologi {
              margin: 10px 0;
              color: #ccc;
              background: #1a1a1a;
@@ -61,15 +61,15 @@
          }
         img { max-width: 100%; border-radius: 5px; margin-top: 10px; border: 2px solid #00ff88; }
         button { padding: 10px 15px; border: none; border-radius: 5px; font-weight: bold; margin-right: 10px; cursor: pointer; }
-.acc { background: #00ff88; color: #000; }
-.tolak { background: #ff4444; color: #fff; font-size: 13px; }
-.loading { text-align: center; font-size: 18px; }
-.badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; background: #444; }
-.verified { border-left: 4px solid #00ff88; }
-.pending { border-left: 4px solid #ffaa00; }
-.rejected { border-left: 4px solid #ff4444; }
-.alasan-box { width: 100%; padding: 8px; margin: 10px 0; background: #333; color: #fff; border: 1px solid #555; border-radius: 5px; box-sizing: border-box; }
-.btn-group { margin:10px 0; display:flex; gap:5px; flex-wrap:wrap; }
+       .acc { background: #00ff88; color: #000; }
+       .tolak { background: #ff4444; color: #fff; font-size: 13px; }
+       .loading { text-align: center; font-size: 18px; }
+       .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; background: #444; }
+       .verified { border-left: 4px solid #00ff88; }
+       .pending { border-left: 4px solid #ffaa00; }
+       .rejected { border-left: 4px solid #ff4444; }
+       .alasan-box { width: 100%; padding: 8px; margin: 10px 0; background: #333; color: #fff; border: 1px solid #555; border-radius: 5px; box-sizing: border-box; }
+       .btn-group { margin:10px 0; display:flex; gap:5px; flex-wrap:wrap; }
     </style>
 </head>
 <body>
@@ -265,26 +265,29 @@
             }
         }
 
+        // ==== FUNCTION UDAH DI-FIX TOTAL PROF ====
         function getFilteredData() {
             const filterValue = document.getElementById('filterPlatform').value;
 
-            let dataFilter = semuaDataLaporan.filter(l => {
-                if (modeTab === 'pending') return l.status === 'pending';
-                return true;
-            });
+            // FIX 1: Export ga peduli tab. Ambil SEMUA data biar verified/pending/rejected tetep ke-download
+            let dataFilter = semuaDataLaporan;
 
             if (filterValue!== 'semua' && filterValue!== '---') {
                 dataFilter = dataFilter.filter(l => {
                     const platform = (l.jenis || l.namaPlatform || l.platform || l.bank || '').toLowerCase();
                     const filter = filterValue.toLowerCase();
 
+                    // FIX 2: Kalo pilih "Export Semua Bank"
                     if (filterValue === 'Bank') {
                         return platform.includes('bank') || platform.includes('bca') || platform.includes('bri') ||
                                platform.includes('mandiri') || platform.includes('bni') || platform.includes('seabank') ||
                                platform.includes('cimb') || platform.includes('bsi') || platform.includes('btn') ||
                                platform.includes('permata') || platform.includes('danamon');
                     }
-                    return platform.includes(filter);
+
+                    // FIX 3: "Bank BTN" harus bisa match "BTN", "Bank BCA" match "BCA"
+                    const filterClean = filter.replace('bank ', '');
+                    return platform.includes(filter) || platform.includes(filterClean);
                 });
             }
             return { dataFilter, filterValue };
