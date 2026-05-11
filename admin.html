@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Hokage V3 - No Delete</title>
+    <title>Dashboard Hokage V3.1 - 1 Klik Tolak</title>
     <style>
         body { font-family: Arial, sans-serif; background: #111; color: #fff; padding: 10px; }
         h1 { color: #00ff88; text-align: center; }
@@ -62,17 +62,18 @@
         img { max-width: 100%; border-radius: 5px; margin-top: 10px; border: 2px solid #00ff88; }
         button { padding: 10px 15px; border: none; border-radius: 5px; font-weight: bold; margin-right: 10px; cursor: pointer; }
 .acc { background: #00ff88; color: #000; }
-.tolak { background: #ff4444; color: #fff; }
+.tolak { background: #ff4444; color: #fff; font-size: 13px; }
 .loading { text-align: center; font-size: 18px; }
 .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; background: #444; }
 .verified { border-left: 4px solid #00ff88; }
 .pending { border-left: 4px solid #ffaa00; }
 .rejected { border-left: 4px solid #ff4444; }
-.alasan-box { width: 100%; padding: 8px; margin: 10px 0; background: #333; color: #fff; border: 1px solid #555; border-radius: 5px; }
+.alasan-box { width: 100%; padding: 8px; margin: 10px 0; background: #333; color: #fff; border: 1px solid #555; border-radius: 5px; box-sizing: border-box; }
+.btn-group { margin:10px 0; display:flex; gap:5px; flex-wrap:wrap; }
     </style>
 </head>
 <body>
-    <h1>🛡️ DASHBOARD HOKAGE V3 🛡️</h1>
+    <h1>🛡️ DASHBOARD HOKAGE V3.1 🛡️</h1>
 
     <!-- FILTER + EXPORT BAR UPGRADE -->
     <div class="export-bar">
@@ -198,6 +199,7 @@
                         <div class="row"><span class="label">Kategori:</span> <span class="value"><span class="badge">${laporan.kategori || 'Lainnya'}</span></span></div>
                         <div class="row"><span class="label">Platform:</span> <span class="value">${laporan.jenis || laporan.namaPlatform || laporan.platform || laporan.bank || '-'}</span></div>
                         <div class="row"><span class="label">No HP / Rekening:</span> <span class="value">${laporan.rekening || laporan.nomor || '-'}</span></div>
+                        <div class="row"><span class="label">Kerugian:</span> <span class="value">Rp ${(Number(laporan.kerugian) || 0).toLocaleString('id-ID')}</span></div>
                         <div class="row"><span class="label">Kronologi:</span> <span class="value">${laporan.kronologi || '-'}</span></div>
                         <div class="row"><span class="label">Pelapor:</span> <span class="value">${laporan.pelapor || 'Anonim'}</span></div>
                         <div class="row"><span class="label">Waktu Lapor:</span> <span class="value">${laporan.waktu? new Date(laporan.waktu).toLocaleString('id-ID') : '-'}</span></div>
@@ -207,11 +209,21 @@
                         <br>
                         ${laporan.status === 'pending'? `
                             <button class="acc" onclick="updateStatus('${key}', 'verified')">✅ ACC JADI VERIFIED</button>
-                            <input type="text" class="alasan-box" id="alasan_${key}" placeholder="Alasan tolak: Bukti kurang jelas / Duplikat">
-                            <button class="tolak" onclick="tolakLaporan('${key}')">❌ TOLAK LAPORAN</button>
+                            <div class="btn-group">
+                                <button class="tolak" onclick="tolakLaporan('${key}', 'Bukti kurang valid')">📸 Bukti Kurang</button>
+                                <button class="tolak" onclick="tolakLaporan('${key}', 'Laporan duplikat')">📑 Duplikat</button>
+                                <button class="tolak" onclick="tolakLaporan('${key}', 'Bukti tidak sesuai')">❌ Bukti Salah</button>
+                                <button class="tolak" onclick="tolakLaporan('${key}', 'Data tidak lengkap')">📝 Ga Lengkap</button>
+                            </div>
+                            <input type="text" class="alasan-box" id="alasan_${key}" placeholder="Atau ketik alasan custom...">
+                            <button class="tolak" onclick="tolakLaporanCustom('${key}')">❌ TOLAK CUSTOM</button>
                         ` : laporan.status === 'verified'? `
-                            <input type="text" class="alasan-box" id="alasan_${key}" placeholder="Alasan tolak: Laporan palsu">
-                            <button class="tolak" onclick="tolakLaporan('${key}')">❌ UBAH JADI DITOLAK</button>
+                            <div class="btn-group">
+                                <button class="tolak" onclick="tolakLaporan('${key}', 'Laporan palsu')">🚫 Laporan Palsu</button>
+                                <button class="tolak" onclick="tolakLaporan('${key}', 'Sudah clear')">✅ Sudah Clear</button>
+                            </div>
+                            <input type="text" class="alasan-box" id="alasan_${key}" placeholder="Atau ketik alasan custom...">
+                            <button class="tolak" onclick="tolakLaporanCustom('${key}')">❌ UBAH JADI DITOLAK</button>
                         ` : `
                             <span style="color:#ff4444">Laporan sudah ditolak</span>
                         `}
@@ -232,15 +244,24 @@
             }
         }
 
-        // GANTI HAPUS JADI TOLAK - V3.0
-        window.tolakLaporan = function(key) {
-            const alasan = document.getElementById('alasan_' + key).value.trim() || 'Ditolak admin';
-            if (confirm(`Yakin mau TOLAK laporan ini?\nAlasan: ${alasan}\n\nData ga dihapus, user bisa liat status DITOLAK.`)) {
+        window.tolakLaporan = function(key, alasan) {
+            if (confirm(`Yakin mau TOLAK laporan ini?\nAlasan: ${alasan}`)) {
                 update(ref(db, 'laporan/' + key), {
                     status: 'rejected',
                     alasan_tolak: alasan
                 });
-                alert('Laporan berhasil ditolak. User bisa liat alasannya di Cek Status.');
+                alert('Laporan berhasil ditolak. User bisa liat alasannya.');
+            }
+        }
+
+        window.tolakLaporanCustom = function(key) {
+            const alasan = document.getElementById('alasan_' + key).value.trim() || 'Ditolak admin';
+            if (confirm(`Yakin mau TOLAK laporan ini?\nAlasan: ${alasan}`)) {
+                update(ref(db, 'laporan/' + key), {
+                    status: 'rejected',
+                    alasan_tolak: alasan
+                });
+                alert('Laporan berhasil ditolak. User bisa liat alasannya.');
             }
         }
 
@@ -309,6 +330,7 @@ Satpam Digital Indonesia`;
                 'Kategori': l.kategori || l.jenis || l.platform || l.bank || 'Lainnya',
                 'Platform': l.jenis || l.namaPlatform || l.platform || l.bank || '-',
                 'Nomor/Rekening': l.rekening || l.nomor || '-',
+                'Kerugian': Number(l.kerugian) || 0,
                 'Pelapor': l.pelapor || 'Anonim',
                 'Kronologi': l.kronologi || '-',
                 'Waktu Lapor': l.waktu? new Date(l.waktu).toLocaleString('id-ID') : '-',
@@ -359,7 +381,7 @@ Satpam Digital Indonesia`;
                 doc.setTextColor(0, 0, 0);
                 doc.setFontSize(9);
                 doc.text(` Status: ${status.toUpperCase()} | Kategori: ${kategori} | Platform: ${platform}`, 14, y+5);
-                doc.text(` Pelapor: ${pelapor} | Waktu: ${waktu}`, 14, y+10);
+                doc.text(` Pelapor: ${pelapor} | Waktu: ${waktu} | Kerugian: Rp ${(Number(l.kerugian) || 0).toLocaleString('id-ID')}`, 14, y+10);
                 if (l.alasan_tolak) {
                     doc.setTextColor(255, 68, 68);
                     doc.text(` Alasan Tolak: ${l.alasan_tolak}`, 14, y+15);
@@ -464,4 +486,4 @@ Satpam Digital Indonesia`;
         loadLaporan();
     </script>
 </body>
-    </html>
+                </html>
