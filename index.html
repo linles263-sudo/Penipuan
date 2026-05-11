@@ -56,12 +56,12 @@
      .checkbox-bukti { display: block; margin: 8px 0; font-weight: 500; }
      .warning-box { background: #fff3cd; border: 1px solid #ffc107; padding: 12px; margin: 15px 0; border-radius: 8px; }
       h3 { margin-top: 25px; margin-bottom: 10px; color: #2c3e50; }
-     .kode-box { background: #e3f2fd; border: 2px dashed #2196f3; padding: 15px; text-align: center; margin: 15px 0; border-radius: 8px; }
-     .kode-box h4 { margin: 0 0 10px 0; color: #1976d2; }
-     .kode-lapor { font-size: 24px; font-weight: bold; color: #d32f2f; letter-spacing: 2px; word-break: break-all; }
+     .sukses-box { background: #d4edda; border: 2px solid #28a745; padding: 15px; text-align: center; margin: 15px 0; border-radius: 8px; }
+     .sukses-box h4 { margin: 0 0 10px 0; color: #155724; }
      .tab { display: flex; gap: 10px; margin-bottom: 15px; }
      .tab button { flex: 1; background: #95a5a6; margin: 0; }
      .tab button.active { background: #e74c3c; }
+     .laporan-item { text-align: left; background: #f8f9fa; padding: 12px; margin: 10px 0; border-radius: 8px; border-left: 4px solid #2196f3; }
     </style>
   </head>
   <body>
@@ -98,9 +98,9 @@
       <div id="tabContentLapor" style="display:none;">
         <h2>🚨 Lapor Penipu Baru</h2>
         <h3>📋 Data Pelapor</h3>
-        <label>Nama / Inisial:</label>
+        <label>Nama / Inisial Anda:</label>
         <input type="text" id="inputNamaPelapor" placeholder="Boleh anonim: Korban #17" required />
-        <p class="note">⚠️ Simpan baik-baik Kode Lapor yang muncul setelah submit. Dipakai untuk cek status.</p>
+        <p class="note">⚠️ Ingat nama ini baik-baik. Dipakai untuk cek status laporan Anda nanti.</p>
         <hr style="margin: 20px 0;" />
         <h3>📎 Data Penipuan *Wajib Lengkap</h3>
         <div class="row">
@@ -150,15 +150,18 @@
       </div>
       <div id="tabContentStatus" style="display:none;">
         <h2>📋 Cek Status Laporan Anda</h2>
-        <p class="note">Masukkan Kode Lapor yang Anda dapat setelah submit</p>
-        <input type="text" id="inputKode" placeholder="Contoh: SD-1728756123456" />
+        <p class="note">Masukkan data yg sama persis seperti saat Anda melapor</p>
+        <label>Nomor HP/Rekening Penipu yg Anda Laporkan:</label>
+        <input type="text" id="inputStatusNomor" placeholder="Contoh: 089686461905" />
+        <label>Nama/Inisial yg Anda Pakai Pas Lapor:</label>
+        <input type="text" id="inputStatusNama" placeholder="Contoh: Korban #17" />
         <button class="btn-biru" onclick="cekStatus()">CEK STATUS SEKARANG</button>
         <div id="hasilCekStatus"></div>
       </div>
     </div>
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-      import { getDatabase, ref, push, onValue, query, orderByChild, equalTo, get } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+      import { getDatabase, ref, push, onValue, query, orderByChild, equalTo, get, limitToLast } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
 
       const firebaseConfig = {
         apiKey: "AIzaSyDymhDdWpz17nJWrqbXc6djpRbNtg5pjb4",
@@ -382,10 +385,8 @@
           }
 
           btn.textContent = 'SIMPAN KE DATABASE...';
-          const kodeLapor = 'SD-' + Date.now();
 
           await push(laporanRef, {
-            kode_lapor: kodeLapor,
             nomor: nomor,
             kronologi: kronologi,
             kategori: kategori,
@@ -399,12 +400,13 @@
           });
 
           hasilLapor.innerHTML = `
-            <div class="kode-box">
+            <div class="sukses-box">
               <h4>✅ LAPORAN BERHASIL DISIMPAN!</h4>
-              <p>Simpan baik-baik kode di bawah untuk cek status:</p>
-              <div class="kode-lapor">${kodeLapor}</div>
-              <p class="note">Screenshot atau catat kode ini. Admin akan verifikasi 1x24 jam.</p>
-              <button class="btn-biru" onclick="showTab('status'); document.getElementById('inputKode').value='${kodeLapor}'; cekStatus();">CEK STATUS SEKARANG</button>
+              <p>Untuk cek status, gunakan:<br>
+              <b>Nomor Penipu:</b> ${nomor}<br>
+              <b>Nama Pelapor:</b> ${nama}</p>
+              <p class="note">Admin akan verifikasi 1x24 jam.</p>
+              <button class="btn-biru" onclick="showTab('status'); document.getElementById('inputStatusNomor').value='${nomor}'; document.getElementById('inputStatusNama').value='${nama}'; cekStatus();">CEK STATUS SEKARANG</button>
             </div>
           `;
 
@@ -431,60 +433,76 @@
         validasiFormLapor();
       }
 
+      // V3.0 - SISTEM CEK STATUS BARU: NOMOR + NAMA
       window.cekStatus = async function() {
-        const kode = document.getElementById('inputKode').value.trim();
+        const nomor = document.getElementById('inputStatusNomor').value.trim();
+        const nama = document.getElementById('inputStatusNama').value.trim();
         const hasil = document.getElementById('hasilCekStatus');
 
-        if (!kode) {
+        if (!nomor ||!nama) {
           hasil.className = 'notfound';
-          hasil.innerHTML = '❌ Masukkan Kode Lapor dulu Prof!';
+          hasil.innerHTML = '❌ Isi Nomor Penipu & Nama Pelapor dulu Prof!';
           return;
         }
 
         hasil.className = 'pending';
-        hasil.innerHTML = '⏳ Mencari data laporan...';
+        hasil.innerHTML = '⏳ Mencari laporan Anda...';
 
         try {
-          const snapshot = await get(laporanRef);
+          const q = query(laporanRef, orderByChild('nomor'), equalTo(nomor));
+          const snapshot = await get(q);
+
           if (snapshot.exists()) {
-            let dataKetemu = null;
+            let laporanUser = [];
             snapshot.forEach((child) => {
               const data = child.val();
-              if (data.kode_lapor === kode) dataKetemu = data;
+              // Cek nama pelapor harus sama persis
+              if (data.pelapor === nama) {
+                laporanUser.push(data);
+              }
             });
 
-            if (dataKetemu) {
-              let statusClass = 'pending';
-              let statusText = '🟡 MENUNGGU VERIFIKASI';
-              let keterangan = 'Laporan Anda sedang direview admin. Estimasi 1x24 jam.';
+            if (laporanUser.length > 0) {
+              let htmlHasil = `<b>Ditemukan ${laporanUser.length} laporan Anda:</b><br><br>`;
 
-              if (dataKetemu.status === 'verified') {
-                statusClass = 'verified';
-                statusText = '✅ TERVERIFIKASI';
-                keterangan = 'Laporan valid! Nomor ini sudah masuk database penipu nasional.';
-              } else if (dataKetemu.status === 'rejected') {
-                statusClass = 'rejected';
-                statusText = '❌ DITOLAK';
-                keterangan = dataKetemu.alasan_tolak || 'Tidak memenuhi syarat bukti.';
-              }
+              laporanUser.forEach((data, index) => {
+                let statusClass = 'pending';
+                let statusText = '🟡 MENUNGGU VERIFIKASI';
+                let keterangan = 'Laporan Anda sedang direview admin. Estimasi 1x24 jam.';
 
-              hasil.className = statusClass;
-              hasil.innerHTML = `
-                <b>Kode Lapor:</b> ${dataKetemu.kode_lapor}<br>
-                <span class="status-badge ${statusClass}">${statusText}</span><br><br>
-                <b>Nomor Dilaporkan:</b> ${dataKetemu.nomor}<br>
-                <b>Platform:</b> ${dataKetemu.jenis}<br>
-                <b>Tanggal Lapor:</b> ${new Date(dataKetemu.waktu).toLocaleString('id-ID')}<br><br>
-                <b>Keterangan Admin:</b><br>
-                ${keterangan}
-              `;
+                if (data.status === 'verified') {
+                  statusClass = 'verified';
+                  statusText = '✅ TERVERIFIKASI';
+                  keterangan = 'Laporan valid! Nomor ini sudah masuk database penipu nasional.';
+                } else if (data.status === 'rejected') {
+                  statusClass = 'rejected';
+                  statusText = '❌ DITOLAK';
+                  keterangan = data.alasan_tolak || 'Tidak memenuhi syarat bukti.';
+                }
+
+                htmlHasil += `
+                  <div class="laporan-item">
+                    <b>Laporan #${index + 1}</b><br>
+                    <span class="status-badge ${statusClass}">${statusText}</span><br><br>
+                    <b>Nomor Dilaporkan:</b> ${data.nomor}<br>
+                    <b>Platform:</b> ${data.jenis}<br>
+                    <b>Tanggal Lapor:</b> ${new Date(data.waktu).toLocaleString('id-ID')}<br>
+                    <b>Kerugian:</b> Rp ${(Number(data.kerugian) || 0).toLocaleString('id-ID')}<br><br>
+                    <b>Keterangan:</b> ${keterangan}
+                  </div>
+                `;
+              });
+
+              hasil.className = 'verified';
+              hasil.innerHTML = htmlHasil;
+
             } else {
               hasil.className = 'notfound';
-              hasil.innerHTML = '❌ KODE TIDAK DITEMUKAN<br><br>Pastikan kode sudah benar. Format: SD-1728756123456';
+              hasil.innerHTML = `❌ TIDAK DITEMUKAN<br><br>Tidak ada laporan dari "${nama}" untuk nomor "${nomor}".<br>Pastikan nama & nomor sama persis seperti saat melapor.`;
             }
           } else {
             hasil.className = 'notfound';
-            hasil.innerHTML = '❌ DATABASE KOSONG. Belum ada laporan masuk.';
+            hasil.innerHTML = '❌ NOMOR BELUM PERNAH DILAPORKAN<br><br>Nomor ini belum ada di database.';
           }
         } catch (error) {
           hasil.className = 'bahaya';
