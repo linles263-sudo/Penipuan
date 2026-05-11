@@ -99,7 +99,8 @@
         <select id="inputKategori" onchange="updateJenis()">
           <option value="">Pilih Kategori</option>
           <option value="E-Wallet">E-Wallet</option>
-          <option value="Bank">Bank Transfer</option>
+          <option value="Bank Konvensional">Bank Konvensional</option>
+          <option value="Bank Digital">Bank Digital</option>
         </select>
       </div>
       <div>
@@ -166,10 +167,11 @@
       document.getElementById('totalRugi').textContent = totalKerugian.toLocaleString('id-ID');
     });
 
-    // DATA E-WALLET VS BANK
+    // DATA E-WALLET VS BANK - UPDATE 2026 LENGKAP
     const dataPlatform = {
       'E-Wallet': ['DANA', 'GoPay', 'OVO', 'ShopeePay', 'LinkAja'],
-      'Bank': ['BCA', 'BRI', 'Mandiri', 'BNI', 'CIMB Niaga', 'Permata', 'BSI']
+      'Bank Konvensional': ['BCA', 'BRI', 'Mandiri', 'BNI', 'CIMB Niaga', 'Permata', 'BSI', 'BTN', 'Danamon', 'Maybank'],
+      'Bank Digital': ['Bank Jago', 'Allo Bank', 'SeaBank', 'Bank Neo Commerce', 'Blu by BCA Digital', 'Jenius BTPN', 'Bank Aladin Syariah', 'Superbank']
     };
 
     // FUNGSI UPDATE DROPDOWN JENIS
@@ -187,11 +189,11 @@
         dataPlatform['E-Wallet'].forEach(nama => {
           jenisSelect.innerHTML += `<option value="${nama}">${nama}</option>`;
         });
-      } else if (kategori === 'Bank') {
+      } else if (kategori === 'Bank Konvensional' || kategori === 'Bank Digital') {
         labelNomor.textContent = 'Nomor Rekening Bank Penipu:';
         inputLapor.placeholder = 'Contoh: 1234567890';
-        dataPlatform['Bank'].forEach(nama => {
-          jenisSelect.innerHTML += `<option value="Bank ${nama}">Bank ${nama}</option>`;
+        dataPlatform[kategori].forEach(nama => {
+          jenisSelect.innerHTML += `<option value="${nama}">${nama}</option>`;
         });
       } else {
         labelNomor.textContent = 'Nomor HP / Rekening Penipu:';
@@ -349,4 +351,4 @@
   </script>
 
 </body>
-      </html>
+                                </html>
