@@ -29,42 +29,42 @@
 
   <style>
     body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f5f5f5; }
-.box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+   .box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
     h1 { text-align: center; color: #2c3e50; margin-bottom: 5px; }
-.sub { text-align: center; color: #7f8c8d; font-size: 14px; margin-bottom: 20px; }
+   .sub { text-align: center; color: #7f8c8d; font-size: 14px; margin-bottom: 20px; }
     input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
     label { font-weight: bold; color: #2c3e50; font-size: 14px; display: block; margin-top: 10px; }
     button { width: 100%; padding: 14px; background: #e74c3c; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
     button:hover { background: #c0392b; }
     button:disabled { background: #95a5a6!important; cursor: not-allowed; }
- .btn-biru { background: #2196f3; }
- .btn-biru:hover { background: #1976d2; }
+   .btn-biru { background: #2196f3; }
+   .btn-biru:hover { background: #1976d2; }
     #hasil, #hasilCekStatus, #hasilLapor { padding: 15px; border-radius: 8px; margin-top: 15px; font-weight: bold; text-align: center; }
-.aman { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-.bahaya { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-.loading { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
-.pending { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
-.verified { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-.rejected { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-.notfound { background: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
-.stats { display: flex; justify-content: space-around; text-align: center; }
-.stat h3 { margin: 0; color: #e74c3c; font-size: 24px; }
-.stat p { margin: 5px 0 0 0; color: #7f8c8d; font-size: 12px; }
-.bukti-img { width: 100%; max-width: 150px; margin: 5px; border-radius: 8px; border: 2px solid #ddd; }
-.bukti-container { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
-.note { font-size: 12px; color: #7f8c8d; margin: 5px 0; }
-.status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
-.row { display: flex; gap: 10px; flex-wrap: wrap; }
-.row > div { flex: 1; min-width: 200px; }
-.checkbox-bukti { display: block; margin: 8px 0; font-weight: 500; }
-.warning-box { background: #fff3cd; border: 1px solid #ffc107; padding: 12px; margin: 15px 0; border-radius: 8px; }
-  h3 { margin-top: 25px; margin-bottom: 10px; color: #2c3e50; }
-.kode-box { background: #e3f2fd; border: 2px dashed #2196f3; padding: 15px; text-align: center; margin: 15px 0; border-radius: 8px; }
-.kode-box h4 { margin: 0 0 10px 0; color: #1976d2; }
-.kode-lapor { font-size: 24px; font-weight: bold; color: #d32f2f; letter-spacing: 2px; word-break: break-all; }
-.tab { display: flex; gap: 10px; margin-bottom: 15px; }
-.tab button { flex: 1; background: #95a5a6; margin: 0; }
-.tab button.active { background: #e74c3c; }
+   .aman { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+   .bahaya { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+   .loading { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+   .pending { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+   .verified { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+   .rejected { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+   .notfound { background: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
+   .stats { display: flex; justify-content: space-around; text-align: center; }
+   .stat h3 { margin: 0; color: #e74c3c; font-size: 24px; }
+   .stat p { margin: 5px 0 0 0; color: #7f8c8d; font-size: 12px; }
+   .bukti-img { width: 100%; max-width: 150px; margin: 5px; border-radius: 8px; border: 2px solid #ddd; }
+   .bukti-container { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+   .note { font-size: 12px; color: #7f8c8d; margin: 5px 0; }
+   .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+   .row { display: flex; gap: 10px; flex-wrap: wrap; }
+   .row > div { flex: 1; min-width: 200px; }
+   .checkbox-bukti { display: block; margin: 8px 0; font-weight: 500; }
+   .warning-box { background: #fff3cd; border: 1px solid #ffc107; padding: 12px; margin: 15px 0; border-radius: 8px; }
+    h3 { margin-top: 25px; margin-bottom: 10px; color: #2c3e50; }
+   .kode-box { background: #e3f2fd; border: 2px dashed #2196f3; padding: 15px; text-align: center; margin: 15px 0; border-radius: 8px; }
+   .kode-box h4 { margin: 0 0 10px 0; color: #1976d2; }
+   .kode-lapor { font-size: 24px; font-weight: bold; color: #d32f2f; letter-spacing: 2px; word-break: break-all; }
+   .tab { display: flex; gap: 10px; margin-bottom: 15px; }
+   .tab button { flex: 1; background: #95a5a6; margin: 0; }
+   .tab button.active { background: #e74c3c; }
   </style>
 </head>
 <body>
@@ -404,7 +404,7 @@
         btn.textContent = 'SIMPAN KE DATABASE...';
         const kodeLapor = 'SD-' + Date.now();
 
-        const dataToPush = {
+        await push(laporanRef, {
           kode_lapor: kodeLapor,
           nomor: nomor,
           kronologi: kronologi,
@@ -416,14 +416,7 @@
           bukti: buktiBase64,
           status: 'pending',
           alasan_tolak: ''
-        };
-
-        console.log('[DEBUG] DATA YANG MAU DI-PUSH:', dataToPush);
-
-        const pushResult = await push(laporanRef, dataToPush);
-
-        console.log('[DEBUG] PUSH BERHASIL. KEY:', pushResult.key);
-        console.log('[DEBUG] KODE_LAPOR TERSIMPAN:', kodeLapor);
+        });
 
         hasilLapor.innerHTML = `
           <div class="kode-box">
@@ -450,15 +443,15 @@
         validasiFormLapor();
 
       } catch (error) {
-        console.error('[DEBUG] GAGAL TOTAL:', error);
         alert('❌ Gagal simpan: ' + error.message);
-        hasilLapor.innerHTML = `<div class="bahaya">❌ Gagal simpan: ${error.message}<br>Data TIDAK tersimpan. Coba lagi.</div>`;
+        hasilLapor.innerHTML = `<div class="bahaya">❌ Gagal simpan: ${error.message}</div>`;
       }
 
       btn.disabled = false;
       validasiFormLapor();
     }
 
+    // VERSI BYPASS - GA PAKE QUERY, GA BUTUH.indexOn
     window.cekStatus = async function() {
       const kode = document.getElementById('inputKode').value.trim();
       const hasil = document.getElementById('hasilCekStatus');
@@ -472,46 +465,49 @@
       hasil.className = 'pending';
       hasil.innerHTML = '⏳ Mencari data laporan...';
 
-      console.log('[DEBUG] NYARI KODE:', kode);
-
       try {
-        const q = query(laporanRef, orderByChild('kode_lapor'), equalTo(kode));
-        const snapshot = await get(q);
-
-        console.log('[DEBUG] HASIL SNAPSHOT:', snapshot.exists(), snapshot.val());
-
+        const snapshot = await get(laporanRef);
         if (snapshot.exists()) {
-          const data = Object.values(snapshot.val())[0];
-          let statusClass = 'pending';
-          let statusText = '🟡 MENUNGGU VERIFIKASI';
-          let keterangan = 'Laporan Anda sedang direview admin. Estimasi 1x24 jam.';
+          let dataKetemu = null;
+          snapshot.forEach((child) => {
+            const data = child.val();
+            if (data.kode_lapor === kode) dataKetemu = data;
+          });
 
-          if (data.status === 'verified') {
-            statusClass = 'verified';
-            statusText = '✅ TERVERIFIKASI';
-            keterangan = 'Laporan valid! Nomor ini sudah masuk database penipu nasional.';
-          } else if (data.status === 'rejected') {
-            statusClass = 'rejected';
-            statusText = '❌ DITOLAK';
-            keterangan = data.alasan_tolak || 'Tidak memenuhi syarat bukti. Pastikan ada bukti transfer & chat.';
+          if (dataKetemu) {
+            let statusClass = 'pending';
+            let statusText = '🟡 MENUNGGU VERIFIKASI';
+            let keterangan = 'Laporan Anda sedang direview admin. Estimasi 1x24 jam.';
+
+            if (dataKetemu.status === 'verified') {
+              statusClass = 'verified';
+              statusText = '✅ TERVERIFIKASI';
+              keterangan = 'Laporan valid! Nomor ini sudah masuk database penipu nasional.';
+            } else if (dataKetemu.status === 'rejected') {
+              statusClass = 'rejected';
+              statusText = '❌ DITOLAK';
+              keterangan = dataKetemu.alasan_tolak || 'Tidak memenuhi syarat bukti.';
+            }
+
+            hasil.className = statusClass;
+            hasil.innerHTML = `
+              <b>Kode Lapor:</b> ${dataKetemu.kode_lapor}<br>
+              <span class="status-badge ${statusClass}">${statusText}</span><br><br>
+              <b>Nomor Dilaporkan:</b> ${dataKetemu.nomor}<br>
+              <b>Platform:</b> ${dataKetemu.jenis}<br>
+              <b>Tanggal Lapor:</b> ${new Date(dataKetemu.waktu).toLocaleString('id-ID')}<br><br>
+              <b>Keterangan Admin:</b><br>
+              ${keterangan}
+            `;
+          } else {
+            hasil.className = 'notfound';
+            hasil.innerHTML = '❌ KODE TIDAK DITEMUKAN<br><br>Pastikan kode sudah benar. Format: SD-1728756123456';
           }
-
-          hasil.className = statusClass;
-          hasil.innerHTML = `
-            <b>Kode Lapor:</b> ${data.kode_lapor}<br>
-            <span class="status-badge ${statusClass}">${statusText}</span><br><br>
-            <b>Nomor Dilaporkan:</b> ${data.nomor}<br>
-            <b>Platform:</b> ${data.jenis}<br>
-            <b>Tanggal Lapor:</b> ${new Date(data.waktu).toLocaleString('id-ID')}<br><br>
-            <b>Keterangan Admin:</b><br>
-            ${keterangan}
-          `;
         } else {
           hasil.className = 'notfound';
-          hasil.innerHTML = '❌ KODE TIDAK DITEMUKAN<br><br>Pastikan kode sudah benar. Format: SD-1728756123456';
+          hasil.innerHTML = '❌ DATABASE KOSONG. Belum ada laporan masuk.';
         }
       } catch (error) {
-        console.error('[DEBUG] ERROR CEK STATUS:', error);
         hasil.className = 'bahaya';
         hasil.innerHTML = '❌ Error: ' + error.message;
       }
@@ -519,4 +515,4 @@
   </script>
 
 </body>
-  </html>
+              </html>
