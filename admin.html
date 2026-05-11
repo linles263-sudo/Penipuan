@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Hokage V2</title>
+    <title>Dashboard Hokage V3 - No Delete</title>
     <style>
         body { font-family: Arial, sans-serif; background: #111; color: #fff; padding: 10px; }
         h1 { color: #00ff88; text-align: center; }
- .tab { display: flex; gap: 10px; margin-bottom: 15px; }
- .tab button { flex: 1; padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
- .tab.active { background: #00ff88; color: #000; }
- .tab.inactive { background: #333; color: #fff; }
- .export-bar { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
- .export-bar select { flex:1; padding:12px; border:none; border-radius:5px; font-weight:bold; background:#333; color:#fff; }
- .btn-wrap { display: flex; gap: 10px; flex-wrap: wrap; }
- .export-bar button { flex:1; padding:12px; border:none; border-radius:5px; font-weight:bold; cursor:pointer; min-width: 120px; }
- .btn-excel { background:#00ff88; color:#000; }
- .btn-pdf { background:#ff4444; color:#fff; }
- .btn-email { background:#0088ff; color:#fff; }
- .laporan {
+.tab { display: flex; gap: 10px; margin-bottom: 15px; }
+.tab button { flex: 1; padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+.tab.active { background: #00ff88; color: #000; }
+.tab.inactive { background: #333; color: #fff; }
+.export-bar { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+.export-bar select { flex:1; padding:12px; border:none; border-radius:5px; font-weight:bold; background:#333; color:#fff; }
+.btn-wrap { display: flex; gap: 10px; flex-wrap: wrap; }
+.export-bar button { flex:1; padding:12px; border:none; border-radius:5px; font-weight:bold; cursor:pointer; min-width: 120px; }
+.btn-excel { background:#00ff88; color:#000; }
+.btn-pdf { background:#ff4444; color:#fff; }
+.btn-email { background:#0088ff; color:#fff; }
+.laporan {
              background: #222;
              border: 1px solid #444;
              border-radius: 8px;
@@ -26,23 +26,23 @@
              margin-bottom: 15px;
              text-align: left;
          }
- .laporan.row {
+.laporan.row {
              display: flex;
              margin: 8px 0;
              align-items: flex-start;
          }
- .laporan.label {
+.laporan.label {
              color: #00ff88;
              font-weight: bold;
              min-width: 140px;
              flex-shrink: 0;
          }
- .laporan.value {
+.laporan.value {
              color: #fff;
              flex: 1;
              word-break: break-word;
          }
- .nomor {
+.nomor {
              font-size: 22px;
              color: #ff4444;
              font-weight: bold;
@@ -51,7 +51,7 @@
              padding-bottom: 10px;
              border-bottom: 1px solid #444;
          }
- .kronologi {
+.kronologi {
              margin: 10px 0;
              color: #ccc;
              background: #1a1a1a;
@@ -61,16 +61,18 @@
          }
         img { max-width: 100%; border-radius: 5px; margin-top: 10px; border: 2px solid #00ff88; }
         button { padding: 10px 15px; border: none; border-radius: 5px; font-weight: bold; margin-right: 10px; cursor: pointer; }
- .acc { background: #00ff88; color: #000; }
- .tolak { background: #ff4444; color: #fff; }
- .loading { text-align: center; font-size: 18px; }
- .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; background: #444; }
- .verified { border-left: 4px solid #00ff88; }
- .pending { border-left: 4px solid #ffaa00; }
+.acc { background: #00ff88; color: #000; }
+.tolak { background: #ff4444; color: #fff; }
+.loading { text-align: center; font-size: 18px; }
+.badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; background: #444; }
+.verified { border-left: 4px solid #00ff88; }
+.pending { border-left: 4px solid #ffaa00; }
+.rejected { border-left: 4px solid #ff4444; }
+.alasan-box { width: 100%; padding: 8px; margin: 10px 0; background: #333; color: #fff; border: 1px solid #555; border-radius: 5px; }
     </style>
 </head>
 <body>
-    <h1>🛡️ DASHBOARD HOKAGE V2 🛡️</h1>
+    <h1>🛡️ DASHBOARD HOKAGE V3 🛡️</h1>
 
     <!-- FILTER + EXPORT BAR UPGRADE -->
     <div class="export-bar">
@@ -115,7 +117,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-        import { getDatabase, ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+        import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDymhDdWpz17nJWrqbXc6djpRbNtg5pjb4",
@@ -142,7 +144,6 @@
             throw new Error("Password salah");
         }
 
-        // DATABASE EMAIL CS BANK - TINGGAL TAMBAH KALO ADA BARU
         const EMAIL_BANK = {
             'Bank BNI': 'bnicall@bni.co.id',
             'Bank BRI': 'callbri@bri.co.id',
@@ -200,14 +201,19 @@
                         <div class="row"><span class="label">Kronologi:</span> <span class="value">${laporan.kronologi || '-'}</span></div>
                         <div class="row"><span class="label">Pelapor:</span> <span class="value">${laporan.pelapor || 'Anonim'}</span></div>
                         <div class="row"><span class="label">Waktu Lapor:</span> <span class="value">${laporan.waktu? new Date(laporan.waktu).toLocaleString('id-ID') : '-'}</span></div>
+                        ${laporan.status === 'rejected'? `<div class="row"><span class="label">Alasan Tolak:</span> <span class="value" style="color:#ff4444">${laporan.alasan_tolak || '-'}</span></div>` : ''}
                         <div class="row"><span class="label">Bukti Chat:</span></div>
                         ${fotoHTML}
                         <br>
                         ${laporan.status === 'pending'? `
                             <button class="acc" onclick="updateStatus('${key}', 'verified')">✅ ACC JADI VERIFIED</button>
-                            <button class="tolak" onclick="hapusLaporan('${key}')">❌ TOLAK/HAPUS</button>
+                            <input type="text" class="alasan-box" id="alasan_${key}" placeholder="Alasan tolak: Bukti kurang jelas / Duplikat">
+                            <button class="tolak" onclick="tolakLaporan('${key}')">❌ TOLAK LAPORAN</button>
+                        ` : laporan.status === 'verified'? `
+                            <input type="text" class="alasan-box" id="alasan_${key}" placeholder="Alasan tolak: Laporan palsu">
+                            <button class="tolak" onclick="tolakLaporan('${key}')">❌ UBAH JADI DITOLAK</button>
                         ` : `
-                            <button class="tolak" onclick="hapusLaporan('${key}')">🗑️ HAPUS DARI DATABASE</button>
+                            <span style="color:#ff4444">Laporan sudah ditolak</span>
                         `}
                     `;
                     listLaporan.appendChild(div);
@@ -226,14 +232,18 @@
             }
         }
 
-        window.hapusLaporan = function(key) {
-            if (confirm('Yakin mau HAPUS laporan ini? Data hilang permanen.')) {
-                remove(ref(db, 'laporan/' + key));
-                alert('Laporan berhasil dihapus.');
+        // GANTI HAPUS JADI TOLAK - V3.0
+        window.tolakLaporan = function(key) {
+            const alasan = document.getElementById('alasan_' + key).value.trim() || 'Ditolak admin';
+            if (confirm(`Yakin mau TOLAK laporan ini?\nAlasan: ${alasan}\n\nData ga dihapus, user bisa liat status DITOLAK.`)) {
+                update(ref(db, 'laporan/' + key), {
+                    status: 'rejected',
+                    alasan_tolak: alasan
+                });
+                alert('Laporan berhasil ditolak. User bisa liat alasannya di Cek Status.');
             }
         }
 
-        // FUNCTION FILTER HOKAGE V2 - BISA PER BANK
         function getFilteredData() {
             const filterValue = document.getElementById('filterPlatform').value;
 
@@ -247,22 +257,18 @@
                     const platform = (l.jenis || l.namaPlatform || l.platform || l.bank || '').toLowerCase();
                     const filter = filterValue.toLowerCase();
 
-                    // Kalo pilih "Bank" = semua bank masuk
                     if (filterValue === 'Bank') {
                         return platform.includes('bank') || platform.includes('bca') || platform.includes('bri') ||
                                platform.includes('mandiri') || platform.includes('bni') || platform.includes('seabank') ||
                                platform.includes('cimb') || platform.includes('bsi') || platform.includes('btn') ||
                                platform.includes('permata') || platform.includes('danamon');
                     }
-
-                    // Kalo pilih bank spesifik
                     return platform.includes(filter);
                 });
             }
             return { dataFilter, filterValue };
         }
 
-        // FUNCTION EMAIL 1-KLIK KE BANK
         window.kirimEmailBank = function() {
             const { dataFilter, filterValue } = getFilteredData();
             if(filterValue === 'semua' || filterValue === '---' || filterValue === 'Bank') {
@@ -294,7 +300,6 @@ Satpam Digital Indonesia`;
             alert(`Email ke ${filterValue} siap dikirim! Tinggal lampirin PDF yg baru lu download.`);
         }
 
-        // FUNCTION DOWNLOAD EXCEL
         window.downloadExcel = function() {
             const { dataFilter, filterValue } = getFilteredData();
             if(dataFilter.length === 0) return alert(`Data ${filterValue} kosong Prof!`);
@@ -308,9 +313,7 @@ Satpam Digital Indonesia`;
                 'Kronologi': l.kronologi || '-',
                 'Waktu Lapor': l.waktu? new Date(l.waktu).toLocaleString('id-ID') : '-',
                 'Jumlah Bukti': l.bukti? l.bukti.length : 0,
-                'Link Bukti 1': l.bukti && l.bukti[0]? l.bukti[0] : '-',
-                'Link Bukti 2': l.bukti && l.bukti[1]? l.bukti[1] : '-',
-                'Link Bukti 3': l.bukti && l.bukti[2]? l.bukti[2] : '-',
+                'Alasan Tolak': l.alasan_tolak || '-',
                 'ID Laporan': l.id
             }));
 
@@ -323,7 +326,6 @@ Satpam Digital Indonesia`;
             alert(`Excel ${filterValue} berhasil di download! Total: ${dataFilter.length} data`);
         }
 
-        // FUNCTION DOWNLOAD PDF - VERSI GRID 2 KOLOM RAPI
         window.downloadPDF = async function() {
             const { dataFilter, filterValue } = getFilteredData();
             if(dataFilter.length === 0) return alert(`Data ${filterValue} kosong Prof!`);
@@ -358,11 +360,16 @@ Satpam Digital Indonesia`;
                 doc.setFontSize(9);
                 doc.text(` Status: ${status.toUpperCase()} | Kategori: ${kategori} | Platform: ${platform}`, 14, y+5);
                 doc.text(` Pelapor: ${pelapor} | Waktu: ${waktu}`, 14, y+10);
+                if (l.alasan_tolak) {
+                    doc.setTextColor(255, 68, 68);
+                    doc.text(` Alasan Tolak: ${l.alasan_tolak}`, 14, y+15);
+                    doc.setTextColor(0, 0, 0);
+                    y += 5;
+                }
                 const kronologi = doc.splitTextToSize(` Kronologi: ${l.kronologi || '-'}`, 180);
                 doc.text(kronologi, 14, y+15);
                 y += 15 + (kronologi.length * 4);
 
-                // AMBIL & TEMPEL SEMUA BUKTI GAMBAR - VERSI GRID 2 KOLOM
                 if (l.bukti && l.bukti.length > 0) {
                     doc.setFontSize(9);
                     doc.setTextColor(0, 255, 136);
@@ -420,7 +427,6 @@ Satpam Digital Indonesia`;
                             doc.text(`Bukti ${j + 1}: Error`, 14 + (col * (colWidth + gap)), y);
                             if (col === 1 || j === l.bukti.length - 1) y += 15;
                             col = col === 0? 1 : 0;
-                            console.log('Error gambar:', err);
                         }
                     }
                     if (col === 1) y += maxImgHeight + 8;
