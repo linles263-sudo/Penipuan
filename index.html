@@ -11,57 +11,60 @@
   <meta name="author" content="Satpam Digital Indonesia">
   <link rel="canonical" href="https://linles263-sudo.github.io/Penipuan/">
 
-  <!-- Open Graph buat WA/FB/Twitter -->
   <meta property="og:title" content="Cek Rekening & Nomor Penipu Online">
   <meta property="og:description" content="Cek & lapor nomor rekening penipu GoPay, DANA, OVO, Bank. Database terupdate 2026. Selamatkan uang Anda!">
   <meta property="og:url" content="https://linles263-sudo.github.io/Penipuan/">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://linles263-sudo.github.io/Penipuan/logo.png">
 
-  <!-- Schema biar Google ngerti ini web cek penipu -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "Satpam Digital Indonesia - Cek Penipu",
     "url": "https://linles263-sudo.github.io/Penipuan/",
-    "description": "Platform cek dan lapor rekening/nomor penipu online nasional",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://linles263-sudo.github.io/Penipuan/?cek={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
+    "description": "Platform cek dan lapor rekening/nomor penipu online nasional"
   }
   </script>
 
   <style>
     body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f5f5f5; }
- .box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+.box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
     h1 { text-align: center; color: #2c3e50; margin-bottom: 5px; }
- .sub { text-align: center; color: #7f8c8d; font-size: 14px; margin-bottom: 20px; }
+.sub { text-align: center; color: #7f8c8d; font-size: 14px; margin-bottom: 20px; }
     input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
     label { font-weight: bold; color: #2c3e50; font-size: 14px; display: block; margin-top: 10px; }
     button { width: 100%; padding: 14px; background: #e74c3c; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
     button:hover { background: #c0392b; }
     button:disabled { background: #95a5a6!important; cursor: not-allowed; }
-    #hasil { padding: 15px; border-radius: 8px; margin-top: 15px; font-weight: bold; text-align: center; }
- .aman { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
- .bahaya { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
- .loading { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
- .stats { display: flex; justify-content: space-around; text-align: center; }
- .stat h3 { margin: 0; color: #e74c3c; font-size: 24px; }
- .stat p { margin: 5px 0 0 0; color: #7f8c8d; font-size: 12px; }
- .bukti-img { width: 100%; max-width: 150px; margin: 5px; border-radius: 8px; border: 2px solid #ddd; }
- .bukti-container { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
- .note { font-size: 12px; color: #7f8c8d; margin: 5px 0; }
- .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
- .verified { background: #d4edda; color: #155724; }
- .pending { background: #fff3cd; color: #856404; }
- .row { display: flex; gap: 10px; flex-wrap: wrap; }
- .row > div { flex: 1; min-width: 200px; }
- .checkbox-bukti { display: block; margin: 8px 0; font-weight: 500; }
- .warning-box { background: #fff3cd; border: 1px solid #ffc107; padding: 12px; margin: 15px 0; border-radius: 8px; }
+   .btn-biru { background: #2196f3; }
+   .btn-biru:hover { background: #1976d2; }
+    #hasil, #hasilCekStatus, #hasilLapor { padding: 15px; border-radius: 8px; margin-top: 15px; font-weight: bold; text-align: center; }
+.aman { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.bahaya { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+.loading { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+.pending { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+.verified { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.rejected { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+.notfound { background: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
+.stats { display: flex; justify-content: space-around; text-align: center; }
+.stat h3 { margin: 0; color: #e74c3c; font-size: 24px; }
+.stat p { margin: 5px 0 0 0; color: #7f8c8d; font-size: 12px; }
+.bukti-img { width: 100%; max-width: 150px; margin: 5px; border-radius: 8px; border: 2px solid #ddd; }
+.bukti-container { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+.note { font-size: 12px; color: #7f8c8d; margin: 5px 0; }
+.status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; }
+.row > div { flex: 1; min-width: 200px; }
+.checkbox-bukti { display: block; margin: 8px 0; font-weight: 500; }
+.warning-box { background: #fff3cd; border: 1px solid #ffc107; padding: 12px; margin: 15px 0; border-radius: 8px; }
   h3 { margin-top: 25px; margin-bottom: 10px; color: #2c3e50; }
+.kode-box { background: #e3f2fd; border: 2px dashed #2196f3; padding: 15px; text-align: center; margin: 15px 0; border-radius: 8px; }
+.kode-box h4 { margin: 0 0 10px 0; color: #1976d2; }
+.kode-lapor { font-size: 24px; font-weight: bold; color: #d32f2f; letter-spacing: 2px; }
+.tab { display: flex; gap: 10px; margin-bottom: 15px; }
+.tab button { flex: 1; background: #95a5a6; margin: 0; }
+.tab button.active { background: #e74c3c; }
   </style>
 </head>
 <body>
@@ -86,87 +89,95 @@
     </div>
   </div>
 
+  <!-- === TAB PILIHAN === -->
   <div class="box">
-    <h2>🔍 Cek Nomor/Rekening</h2>
-    <input type="text" id="inputCek" placeholder="Masukkan nomor HP / rekening">
-    <button onclick="cekData()">CEK SEKARANG</button>
-    <div id="hasil"></div>
-  </div>
-
-  <div class="box">
-    <h2>🚨 Lapor Penipu Baru</h2>
-
-    <!-- === UPDATE V2.1: FINAL RAPI === -->
-    <h3>📋 Data Pelapor *Wajib Diisi</h3>
-    <label>Nama / Inisial:</label>
-    <input type="text" id="inputNamaPelapor" placeholder="Boleh anonim: Korban #17" required>
-
-    <label>Nomor WhatsApp Aktif:</label>
-    <input type="tel" id="inputWAPelapor" placeholder="08xxxxxxxxxx" pattern="08[0-9]{8,11}" required>
-    <p class="note">⚠️ WA hanya untuk notifikasi status laporan. Disensor di web jadi 08xx****xxxx. Kami tunduk UU PDP No.27/2022.</p>
-
-    <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; margin: 10px 0;">
-      <input type="checkbox" id="inputIzinHubungi" style="width: 18px; height: 18px; margin: 0;">
-      <span>Saya bersedia dihubungi admin jika bukti kurang</span>
-    </label>
-    <!-- === END DATA PELAPOR === -->
-
-    <hr style="margin: 20px 0;">
-
-    <h3>📎 Data Penipuan *Wajib Lengkap</h3>
-    <div class="row">
-      <div>
-        <label>Kategori:</label>
-        <select id="inputKategori" onchange="updateJenis()" required>
-          <option value="">Pilih Kategori</option>
-          <option value="E-Wallet">E-Wallet</option>
-          <option value="Bank Konvensional">Bank Konvensional</option>
-          <option value="Bank Digital">Bank Digital</option>
-        </select>
-      </div>
-      <div>
-        <label>Nama Platform:</label>
-        <select id="inputJenis" required>
-          <option value="">Pilih kategori dulu</option>
-        </select>
-      </div>
+    <div class="tab">
+      <button class="active" onclick="showTab('cek')" id="tabCek">🔍 CEK NOMOR</button>
+      <button onclick="showTab('lapor')" id="tabLapor">🚨 LAPOR</button>
+      <button onclick="showTab('status')" id="tabStatus">📋 CEK STATUS</button>
     </div>
 
-    <label id="labelNomor">Nomor HP / Rekening Penipu:</label>
-    <input type="text" id="inputLapor" placeholder="Pilih kategori dulu" required>
-
-    <label>Jumlah Kerugian (Rp):</label>
-    <input type="text" id="inputKerugian" placeholder="Contoh: 500000"
-           oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
-    <p class="note">Ketik angka aja tanpa titik/koma. Contoh: 500000 untuk Rp 500.000</p>
-
-    <label>Kronologi Kejadian:</label>
-    <textarea id="inputKronologi" placeholder="Modus apa, kapan kejadian, kerugian berapa" rows="3" required></textarea>
-
-    <label>Upload Bukti Transfer/Chat (Max 2 foto, max 500KB/foto):</label>
-    <input type="file" id="inputBukti" accept="image/*" multiple required>
-    <p class="note">Foto otomatis dikompres. Wajib ada bukti biar laporan valid.</p>
-
-    <!-- === UPDATE V2.0: CHECKBOX BUKTI WAJIB === -->
-    <div class="warning-box">
-      <b>⚠️ CHECKLIST BUKTI WAJIB - Centang Semua:</b><br>
-      <label class="checkbox-bukti">
-        <input type="checkbox" class="bukti-wajib" required>
-        1. Saya sudah upload Screenshot Bukti Transfer ke Pelaku
-      </label>
-      <label class="checkbox-bukti">
-        <input type="checkbox" class="bukti-wajib" required>
-        2. Saya sudah upload Screenshot Chat Penipuan/Bukti Modus
-      </label>
-      <label class="checkbox-bukti">
-        <input type="checkbox" class="bukti-wajib" required>
-        3. Nomor Rekening/DANA/GoPay Pelaku Sudah Benar
-      </label>
+    <!-- === TAB 1: CEK NOMOR === -->
+    <div id="tabContentCek">
+      <h2>🔍 Cek Nomor/Rekening Penipu</h2>
+      <input type="text" id="inputCek" placeholder="Masukkan nomor HP / rekening">
+      <button onclick="cekData()">CEK SEKARANG</button>
+      <div id="hasil"></div>
     </div>
-    <p class="note"><b>Tanpa centang 3 di atas + upload bukti, tombol LAPOR tidak bisa diklik. Laporan tanpa bukti TF akan OTOMATIS DITOLAK sistem.</b></p>
-    <!-- === END CHECKBOX === -->
 
-    <button id="btnLapor" onclick="laporData()" disabled>LENGKAPI DATA + CENTANG 3 BUKTI DULU</button>
+    <!-- === TAB 2: LAPOR === -->
+    <div id="tabContentLapor" style="display:none;">
+      <h2>🚨 Lapor Penipu Baru</h2>
+
+      <h3>📋 Data Pelapor</h3>
+      <label>Nama / Inisial:</label>
+      <input type="text" id="inputNamaPelapor" placeholder="Boleh anonim: Korban #17" required>
+      <p class="note">⚠️ Simpan baik-baik Kode Lapor yang muncul setelah submit. Dipakai untuk cek status.</p>
+
+      <hr style="margin: 20px 0;">
+
+      <h3>📎 Data Penipuan *Wajib Lengkap</h3>
+      <div class="row">
+        <div>
+          <label>Kategori:</label>
+          <select id="inputKategori" onchange="updateJenis()" required>
+            <option value="">Pilih Kategori</option>
+            <option value="E-Wallet">E-Wallet</option>
+            <option value="Bank Konvensional">Bank Konvensional</option>
+            <option value="Bank Digital">Bank Digital</option>
+          </select>
+        </div>
+        <div>
+          <label>Nama Platform:</label>
+          <select id="inputJenis" required>
+            <option value="">Pilih kategori dulu</option>
+          </select>
+        </div>
+      </div>
+
+      <label id="labelNomor">Nomor HP / Rekening Penipu:</label>
+      <input type="text" id="inputLapor" placeholder="Pilih kategori dulu" required>
+
+      <label>Jumlah Kerugian (Rp):</label>
+      <input type="text" id="inputKerugian" placeholder="Contoh: 500000"
+             oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+      <p class="note">Ketik angka aja tanpa titik/koma. Contoh: 500000 untuk Rp 500.000</p>
+
+      <label>Kronologi Kejadian:</label>
+      <textarea id="inputKronologi" placeholder="Modus apa, kapan kejadian, kerugian berapa" rows="3" required></textarea>
+
+      <label>Upload Bukti Transfer/Chat (Max 2 foto, max 500KB/foto):</label>
+      <input type="file" id="inputBukti" accept="image/*" multiple required>
+      <p class="note">Foto otomatis dikompres. Wajib ada bukti biar laporan valid.</p>
+
+      <div class="warning-box">
+        <b>⚠️ CHECKLIST BUKTI WAJIB - Centang Semua:</b><br>
+        <label class="checkbox-bukti">
+          <input type="checkbox" class="bukti-wajib" required>
+          1. Saya sudah upload Screenshot Bukti Transfer ke Pelaku
+        </label>
+        <label class="checkbox-bukti">
+          <input type="checkbox" class="bukti-wajib" required>
+          2. Saya sudah upload Screenshot Chat Penipuan/Bukti Modus
+        </label>
+        <label class="checkbox-bukti">
+          <input type="checkbox" class="bukti-wajib" required>
+          3. Nomor Rekening/DANA/GoPay Pelaku Sudah Benar
+        </label>
+      </div>
+
+      <button id="btnLapor" onclick="laporData()" disabled>LENGKAPI DATA + CENTANG 3 BUKTI DULU</button>
+      <div id="hasilLapor"></div>
+    </div>
+
+    <!-- === TAB 3: CEK STATUS === -->
+    <div id="tabContentStatus" style="display:none;">
+      <h2>📋 Cek Status Laporan Anda</h2>
+      <p class="note">Masukkan Kode Lapor yang Anda dapat setelah submit</p>
+      <input type="text" id="inputKode" placeholder="Contoh: SD-1728756123456">
+      <button class="btn-biru" onclick="cekStatus()">CEK STATUS SEKARANG</button>
+      <div id="hasilCekStatus"></div>
+    </div>
   </div>
 
   <script type="module">
@@ -190,11 +201,30 @@
 
     document.getElementById('statusServer').style.color = '#27ae60';
 
-    // AUTO HITUNG TOTAL LAPORAN + TOTAL KERUGIAN DARI FIREBASE
+    // === FUNGSI GANTI TAB ===
+    window.showTab = function(tab) {
+      document.getElementById('tabContentCek').style.display = 'none';
+      document.getElementById('tabContentLapor').style.display = 'none';
+      document.getElementById('tabContentStatus').style.display = 'none';
+      document.getElementById('tabCek').classList.remove('active');
+      document.getElementById('tabLapor').classList.remove('active');
+      document.getElementById('tabStatus').classList.remove('active');
+
+      if(tab === 'cek') {
+        document.getElementById('tabContentCek').style.display = 'block';
+        document.getElementById('tabCek').classList.add('active');
+      } else if(tab === 'lapor') {
+        document.getElementById('tabContentLapor').style.display = 'block';
+        document.getElementById('tabLapor').classList.add('active');
+      } else if(tab === 'status') {
+        document.getElementById('tabContentStatus').style.display = 'block';
+        document.getElementById('tabStatus').classList.add('active');
+      }
+    }
+
     onValue(laporanRef, (snapshot) => {
       let totalKerugian = 0;
       let totalVerified = 0;
-
       snapshot.forEach((childSnapshot) => {
         const data = childSnapshot.val();
         if(data.status === "verified") {
@@ -202,19 +232,16 @@
           totalKerugian += Number(data.kerugian) || 0;
         }
       });
-
       document.getElementById('totalLaporan').textContent = totalVerified;
       document.getElementById('totalRugi').textContent = totalKerugian.toLocaleString('id-ID');
     });
 
-    // DATA E-WALLET VS BANK - UPDATE 2026 LENGKAP
     const dataPlatform = {
       'E-Wallet': ['DANA', 'GoPay', 'OVO', 'ShopeePay', 'LinkAja'],
       'Bank Konvensional': ['BCA', 'BRI', 'Mandiri', 'BNI', 'CIMB Niaga', 'Permata', 'BSI', 'BTN', 'Danamon', 'Maybank'],
       'Bank Digital': ['Bank Jago', 'Allo Bank', 'SeaBank', 'Bank Neo Commerce', 'Blu by BCA Digital', 'Jenius BTPN', 'Bank Aladin Syariah', 'Superbank']
     };
 
-    // FUNGSI UPDATE DROPDOWN JENIS
     window.updateJenis = function() {
       const kategori = document.getElementById('inputKategori').value;
       const jenisSelect = document.getElementById('inputJenis');
@@ -242,10 +269,8 @@
       validasiFormLapor();
     }
 
-    // === UPDATE V2.1: VALIDASI TOMBOL LAPOR ===
     function validasiFormLapor() {
       const nama = document.getElementById('inputNamaPelapor').value.trim();
-      const wa = document.getElementById('inputWAPelapor').value.trim();
       const kategori = document.getElementById('inputKategori').value;
       const jenis = document.getElementById('inputJenis').value;
       const nomor = document.getElementById('inputLapor').value.trim();
@@ -255,8 +280,7 @@
       const buktiCheckboxes = document.querySelectorAll('.bukti-wajib');
 
       const semuaBuktiDicentang = [...buktiCheckboxes].every(cb => cb.checked);
-      const waValid = /^08[0-9]{8,11}$/.test(wa);
-      const semuaFieldIsi = nama && waValid && kategori && jenis && nomor && kerugian && kronologi && files.length > 0;
+      const semuaFieldIsi = nama && kategori && jenis && nomor && kerugian && kronologi && files.length > 0;
 
       const btn = document.getElementById('btnLapor');
       btn.disabled =!(semuaFieldIsi && semuaBuktiDicentang);
@@ -268,14 +292,12 @@
       }
     }
 
-    // Pasang event listener ke semua input
     document.addEventListener('DOMContentLoaded', () => {
-      const allInputs = document.querySelectorAll('#inputNamaPelapor, #inputWAPelapor, #inputKategori, #inputJenis, #inputLapor, #inputKerugian, #inputKronologi, #inputBukti,.bukti-wajib, #inputIzinHubungi');
+      const allInputs = document.querySelectorAll('#inputNamaPelapor, #inputKategori, #inputJenis, #inputLapor, #inputKerugian, #inputKronologi, #inputBukti,.bukti-wajib');
       allInputs.forEach(el => el.addEventListener('input', validasiFormLapor));
       allInputs.forEach(el => el.addEventListener('change', validasiFormLapor));
       validasiFormLapor();
     });
-    // === END VALIDASI ===
 
     async function fileToBase64(file) {
       return new Promise((resolve) => {
@@ -318,6 +340,8 @@
         const data = Object.values(snapshot.val())[0];
         const statusText = data.status === 'verified'?
           '<span class="status-badge verified">✅ TERVERIFIKASI</span>' :
+          data.status === 'rejected'?
+          '<span class="status-badge rejected">❌ DITOLAK</span>' :
           '<span class="status-badge pending">🟡 MENUNGGU VERIFIKASI</span>';
 
         let buktiHtml = '';
@@ -346,7 +370,6 @@
 
     window.laporData = async function() {
       const nama = document.getElementById('inputNamaPelapor').value.trim();
-      const wa = document.getElementById('inputWAPelapor').value.trim();
       const nomor = document.getElementById('inputLapor').value.trim();
       const kronologi = document.getElementById('inputKronologi').value.trim();
       const kategori = document.getElementById('inputKategori').value;
@@ -354,11 +377,7 @@
       const kerugian = document.getElementById('inputKerugian').value.replace(/\./g, '');
       const files = document.getElementById('inputBukti').files;
       const btn = document.getElementById('btnLapor');
-
-      if (!/^08[0-9]{8,11}$/.test(wa)) {
-        alert('Format WA salah Prof! Harus 08xxxxxxxxxx');
-        return;
-      }
+      const hasilLapor = document.getElementById('hasilLapor');
 
       if (files.length === 0) {
         alert('Upload minimal 1 bukti foto Prof! Biar laporan valid.');
@@ -399,7 +418,10 @@
         }
 
         btn.textContent = 'SIMPAN KE DATABASE...';
+        const kodeLapor = 'SD-' + Date.now();
+
         await push(laporanRef, {
+          kode_lapor: kodeLapor,
           nomor: nomor,
           kronologi: kronologi,
           kategori: kategori,
@@ -407,16 +429,22 @@
           kerugian: Number(kerugian) || 0,
           waktu: Date.now(),
           pelapor: nama || 'Anonim',
-          wa_pelapor: wa,
-          izin_hubungi: document.getElementById('inputIzinHubungi').checked,
           bukti: buktiBase64,
-          status: 'pending'
+          status: 'pending',
+          alasan_tolak: ''
         });
 
-        alert('✅ BERHASIL! Laporan + bukti udah masuk server. Admin akan verifikasi 1x24 jam.');
+        hasilLapor.innerHTML = `
+          <div class="kode-box">
+            <h4>✅ LAPORAN BERHASIL DISIMPAN!</h4>
+            <p>Simpan baik-baik kode di bawah untuk cek status:</p>
+            <div class="kode-lapor">${kodeLapor}</div>
+            <p class="note">Screenshot atau catat kode ini. Admin akan verifikasi 1x24 jam.</p>
+            <button class="btn-biru" onclick="showTab('status'); document.getElementById('inputKode').value='${kodeLapor}'; cekStatus();">CEK STATUS SEKARANG</button>
+          </div>
+        `;
+
         document.getElementById('inputNamaPelapor').value = '';
-        document.getElementById('inputWAPelapor').value = '';
-        document.getElementById('inputIzinHubungi').checked = false;
         document.getElementById('inputLapor').value = '';
         document.getElementById('inputKronologi').value = '';
         document.getElementById('inputKategori').value = '';
@@ -432,6 +460,55 @@
 
       btn.disabled = false;
       validasiFormLapor();
+    }
+
+    window.cekStatus = async function() {
+      const kode = document.getElementById('inputKode').value.trim();
+      const hasil = document.getElementById('hasilCekStatus');
+
+      if (!kode) {
+        hasil.className = 'notfound';
+        hasil.innerHTML = '❌ Masukkan Kode Lapor dulu Prof!';
+        return;
+      }
+
+      hasil.className = 'pending';
+      hasil.innerHTML = '⏳ Mencari data laporan...';
+
+      const q = query(laporanRef, orderByChild('kode_lapor'), equalTo(kode));
+      const snapshot = await get(q);
+
+      if (snapshot.exists()) {
+        const data = Object.values(snapshot.val())[0];
+
+        let statusClass = 'pending';
+        let statusText = '🟡 MENUNGGU VERIFIKASI';
+        let keterangan = 'Laporan Anda sedang direview admin. Estimasi 1x24 jam.';
+
+        if (data.status === 'verified') {
+          statusClass = 'verified';
+          statusText = '✅ TERVERIFIKASI';
+          keterangan = 'Laporan valid! Nomor ini sudah masuk database penipu nasional.';
+        } else if (data.status === 'rejected') {
+          statusClass = 'rejected';
+          statusText = '❌ DITOLAK';
+          keterangan = data.alasan_tolak || 'Tidak memenuhi syarat bukti. Pastikan ada bukti transfer & chat.';
+        }
+
+        hasil.className = statusClass;
+        hasil.innerHTML = `
+          <b>Kode Lapor:</b> ${data.kode_lapor}<br>
+          <span class="status-badge ${statusClass}">${statusText}</span><br><br>
+          <b>Nomor Dilaporkan:</b> ${data.nomor}<br>
+          <b>Platform:</b> ${data.jenis}<br>
+          <b>Tanggal Lapor:</b> ${new Date(data.waktu).toLocaleString('id-ID')}<br><br>
+          <b>Keterangan Admin:</b><br>
+          ${keterangan}
+        `;
+      } else {
+        hasil.className = 'notfound';
+        hasil.innerHTML = '❌ KODE TIDAK DITEMUKAN<br><br>Pastikan kode sudah benar. Format: SD-1728756123456';
+      }
     }
   </script>
 
