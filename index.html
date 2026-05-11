@@ -37,8 +37,8 @@
     button { width: 100%; padding: 14px; background: #e74c3c; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
     button:hover { background: #c0392b; }
     button:disabled { background: #95a5a6!important; cursor: not-allowed; }
-  .btn-biru { background: #2196f3; }
-  .btn-biru:hover { background: #1976d2; }
+ .btn-biru { background: #2196f3; }
+ .btn-biru:hover { background: #1976d2; }
     #hasil, #hasilCekStatus, #hasilLapor { padding: 15px; border-radius: 8px; margin-top: 15px; font-weight: bold; text-align: center; }
 .aman { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
 .bahaya { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
@@ -89,7 +89,6 @@
     </div>
   </div>
 
-  <!-- === TAB PILIHAN === -->
   <div class="box">
     <div class="tab">
       <button class="active" onclick="showTab('cek')" id="tabCek">🔍 CEK NOMOR</button>
@@ -97,7 +96,6 @@
       <button onclick="showTab('status')" id="tabStatus">📋 CEK STATUS</button>
     </div>
 
-    <!-- === TAB 1: CEK NOMOR === -->
     <div id="tabContentCek">
       <h2>🔍 Cek Nomor/Rekening Penipu</h2>
       <input type="text" id="inputCek" placeholder="Masukkan nomor HP / rekening">
@@ -105,7 +103,6 @@
       <div id="hasil"></div>
     </div>
 
-    <!-- === TAB 2: LAPOR === -->
     <div id="tabContentLapor" style="display:none;">
       <h2>🚨 Lapor Penipu Baru</h2>
 
@@ -170,7 +167,6 @@
       <div id="hasilLapor"></div>
     </div>
 
-    <!-- === TAB 3: CEK STATUS === -->
     <div id="tabContentStatus" style="display:none;">
       <h2>📋 Cek Status Laporan Anda</h2>
       <p class="note">Masukkan Kode Lapor yang Anda dapat setelah submit</p>
@@ -201,7 +197,6 @@
 
     document.getElementById('statusServer').style.color = '#27ae60';
 
-    // === FUNGSI GANTI TAB ===
     window.showTab = function(tab) {
       document.getElementById('tabContentCek').style.display = 'none';
       document.getElementById('tabContentLapor').style.display = 'none';
@@ -379,21 +374,10 @@
       const btn = document.getElementById('btnLapor');
       const hasilLapor = document.getElementById('hasilLapor');
 
-      if (files.length === 0) {
-        alert('Upload minimal 1 bukti foto Prof! Biar laporan valid.');
-        return;
-      }
-
-      if (files.length > 2) {
-        alert('Maksimal 2 foto Prof! Biar database gak jebol.');
-        return;
-      }
-
+      if (files.length === 0) return alert('Upload minimal 1 bukti foto Prof!');
+      if (files.length > 2) return alert('Maksimal 2 foto Prof!');
       for (let file of files) {
-        if (file.size > 500000) {
-          alert('Foto ' + file.name + ' kegedean Prof! Max 500KB. Kompres dulu pake aplikasi.');
-          return;
-        }
+        if (file.size > 500000) return alert('Foto ' + file.name + ' kegedean Prof! Max 500KB.');
       }
 
       btn.disabled = true;
@@ -403,9 +387,8 @@
       try {
         const q = query(laporanRef, orderByChild('nomor'), equalTo(nomor));
         const snapshot = await get(q);
-
         if (snapshot.exists()) {
-          alert('Nomor ini sudah pernah dilaporkan Prof. Cek aja di atas.');
+          alert('Nomor ini sudah pernah dilaporkan Prof.');
           btn.disabled = false;
           validasiFormLapor();
           return;
@@ -421,7 +404,7 @@
         btn.textContent = 'SIMPAN KE DATABASE...';
         const kodeLapor = 'SD-' + Date.now();
 
-        await push(laporanRef, {
+        const dataToPush = {
           kode_lapor: kodeLapor,
           nomor: nomor,
           kronologi: kronologi,
@@ -433,7 +416,14 @@
           bukti: buktiBase64,
           status: 'pending',
           alasan_tolak: ''
-        });
+        };
+
+        console.log('[DEBUG] DATA YANG MAU DI-PUSH:', dataToPush);
+
+        const pushResult = await push(laporanRef, dataToPush);
+
+        console.log('[DEBUG] PUSH BERHASIL. KEY:', pushResult.key);
+        console.log('[DEBUG] KODE_LAPOR TERSIMPAN:', kodeLapor);
 
         hasilLapor.innerHTML = `
           <div class="kode-box">
@@ -460,8 +450,9 @@
         validasiFormLapor();
 
       } catch (error) {
-        alert('❌ Gagal kirim: ' + error.message);
-        hasilLapor.innerHTML = `<div class="bahaya">❌ Gagal kirim: ${error.message}</div>`;
+        console.error('[DEBUG] GAGAL TOTAL:', error);
+        alert('❌ Gagal simpan: ' + error.message);
+        hasilLapor.innerHTML = `<div class="bahaya">❌ Gagal simpan: ${error.message}<br>Data TIDAK tersimpan. Coba lagi.</div>`;
       }
 
       btn.disabled = false;
@@ -481,39 +472,48 @@
       hasil.className = 'pending';
       hasil.innerHTML = '⏳ Mencari data laporan...';
 
-      const q = query(laporanRef, orderByChild('kode_lapor'), equalTo(kode));
-      const snapshot = await get(q);
+      console.log('[DEBUG] NYARI KODE:', kode);
 
-      if (snapshot.exists()) {
-        const data = Object.values(snapshot.val())[0];
+      try {
+        const q = query(laporanRef, orderByChild('kode_lapor'), equalTo(kode));
+        const snapshot = await get(q);
 
-        let statusClass = 'pending';
-        let statusText = '🟡 MENUNGGU VERIFIKASI';
-        let keterangan = 'Laporan Anda sedang direview admin. Estimasi 1x24 jam.';
+        console.log('[DEBUG] HASIL SNAPSHOT:', snapshot.exists(), snapshot.val());
 
-        if (data.status === 'verified') {
-          statusClass = 'verified';
-          statusText = '✅ TERVERIFIKASI';
-          keterangan = 'Laporan valid! Nomor ini sudah masuk database penipu nasional.';
-        } else if (data.status === 'rejected') {
-          statusClass = 'rejected';
-          statusText = '❌ DITOLAK';
-          keterangan = data.alasan_tolak || 'Tidak memenuhi syarat bukti. Pastikan ada bukti transfer & chat.';
+        if (snapshot.exists()) {
+          const data = Object.values(snapshot.val())[0];
+          let statusClass = 'pending';
+          let statusText = '🟡 MENUNGGU VERIFIKASI';
+          let keterangan = 'Laporan Anda sedang direview admin. Estimasi 1x24 jam.';
+
+          if (data.status === 'verified') {
+            statusClass = 'verified';
+            statusText = '✅ TERVERIFIKASI';
+            keterangan = 'Laporan valid! Nomor ini sudah masuk database penipu nasional.';
+          } else if (data.status === 'rejected') {
+            statusClass = 'rejected';
+            statusText = '❌ DITOLAK';
+            keterangan = data.alasan_tolak || 'Tidak memenuhi syarat bukti. Pastikan ada bukti transfer & chat.';
+          }
+
+          hasil.className = statusClass;
+          hasil.innerHTML = `
+            <b>Kode Lapor:</b> ${data.kode_lapor}<br>
+            <span class="status-badge ${statusClass}">${statusText}</span><br><br>
+            <b>Nomor Dilaporkan:</b> ${data.nomor}<br>
+            <b>Platform:</b> ${data.jenis}<br>
+            <b>Tanggal Lapor:</b> ${new Date(data.waktu).toLocaleString('id-ID')}<br><br>
+            <b>Keterangan Admin:</b><br>
+            ${keterangan}
+          `;
+        } else {
+          hasil.className = 'notfound';
+          hasil.innerHTML = '❌ KODE TIDAK DITEMUKAN<br><br>Pastikan kode sudah benar. Format: SD-1728756123456';
         }
-
-        hasil.className = statusClass;
-        hasil.innerHTML = `
-          <b>Kode Lapor:</b> ${data.kode_lapor}<br>
-          <span class="status-badge ${statusClass}">${statusText}</span><br><br>
-          <b>Nomor Dilaporkan:</b> ${data.nomor}<br>
-          <b>Platform:</b> ${data.jenis}<br>
-          <b>Tanggal Lapor:</b> ${new Date(data.waktu).toLocaleString('id-ID')}<br><br>
-          <b>Keterangan Admin:</b><br>
-          ${keterangan}
-        `;
-      } else {
-        hasil.className = 'notfound';
-        hasil.innerHTML = '❌ KODE TIDAK DITEMUKAN<br><br>Pastikan kode sudah benar. Format: SD-1728756123456';
+      } catch (error) {
+        console.error('[DEBUG] ERROR CEK STATUS:', error);
+        hasil.className = 'bahaya';
+        hasil.innerHTML = '❌ Error: ' + error.message;
       }
     }
   </script>
