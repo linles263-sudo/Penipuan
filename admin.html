@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Hokage</title>
+    <title>Dashboard Hokage V2</title>
     <style>
         body { font-family: Arial, sans-serif; background: #111; color: #fff; padding: 10px; }
         h1 { color: #00ff88; text-align: center; }
-  .tab { display: flex; gap: 10px; margin-bottom: 15px; }
-  .tab button { flex: 1; padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
-  .tab.active { background: #00ff88; color: #000; }
-  .tab.inactive { background: #333; color: #fff; }
-  .export-bar { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
-  .export-bar select { flex:1; padding:12px; border:none; border-radius:5px; font-weight:bold; background:#333; color:#fff; }
-  .btn-wrap { display: flex; gap: 10px; }
-  .export-bar button { flex:1; padding:12px; border:none; border-radius:5px; font-weight:bold; cursor:pointer; }
-  .btn-excel { background:#00ff88; color:#000; }
-  .btn-pdf { background:#ff4444; color:#fff; }
-  .laporan {
+ .tab { display: flex; gap: 10px; margin-bottom: 15px; }
+ .tab button { flex: 1; padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+ .tab.active { background: #00ff88; color: #000; }
+ .tab.inactive { background: #333; color: #fff; }
+ .export-bar { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+ .export-bar select { flex:1; padding:12px; border:none; border-radius:5px; font-weight:bold; background:#333; color:#fff; }
+ .btn-wrap { display: flex; gap: 10px; flex-wrap: wrap; }
+ .export-bar button { flex:1; padding:12px; border:none; border-radius:5px; font-weight:bold; cursor:pointer; min-width: 120px; }
+ .btn-excel { background:#00ff88; color:#000; }
+ .btn-pdf { background:#ff4444; color:#fff; }
+ .btn-email { background:#0088ff; color:#fff; }
+ .laporan {
              background: #222;
              border: 1px solid #444;
              border-radius: 8px;
@@ -25,23 +26,23 @@
              margin-bottom: 15px;
              text-align: left;
          }
-  .laporan.row {
+ .laporan.row {
              display: flex;
              margin: 8px 0;
              align-items: flex-start;
          }
-  .laporan.label {
+ .laporan.label {
              color: #00ff88;
              font-weight: bold;
              min-width: 140px;
              flex-shrink: 0;
          }
-  .laporan.value {
+ .laporan.value {
              color: #fff;
              flex: 1;
              word-break: break-word;
          }
-  .nomor {
+ .nomor {
              font-size: 22px;
              color: #ff4444;
              font-weight: bold;
@@ -50,7 +51,7 @@
              padding-bottom: 10px;
              border-bottom: 1px solid #444;
          }
-  .kronologi {
+ .kronologi {
              margin: 10px 0;
              color: #ccc;
              background: #1a1a1a;
@@ -60,31 +61,44 @@
          }
         img { max-width: 100%; border-radius: 5px; margin-top: 10px; border: 2px solid #00ff88; }
         button { padding: 10px 15px; border: none; border-radius: 5px; font-weight: bold; margin-right: 10px; cursor: pointer; }
-  .acc { background: #00ff88; color: #000; }
-  .tolak { background: #ff4444; color: #fff; }
-  .loading { text-align: center; font-size: 18px; }
-  .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; background: #444; }
-  .verified { border-left: 4px solid #00ff88; }
-  .pending { border-left: 4px solid #ffaa00; }
+ .acc { background: #00ff88; color: #000; }
+ .tolak { background: #ff4444; color: #fff; }
+ .loading { text-align: center; font-size: 18px; }
+ .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; background: #444; }
+ .verified { border-left: 4px solid #00ff88; }
+ .pending { border-left: 4px solid #ffaa00; }
     </style>
 </head>
 <body>
-    <h1>🛡️ DASHBOARD HOKAGE 🛡️</h1>
+    <h1>🛡️ DASHBOARD HOKAGE V2 🛡️</h1>
 
-    <!-- TOMBOL EXPORT + FILTER PLATFORM BARU -->
+    <!-- FILTER + EXPORT BAR UPGRADE -->
     <div class="export-bar">
         <select id="filterPlatform">
             <option value="semua">📋 Export Semua Platform</option>
+            <option value="---">--- E-WALLET ---</option>
             <option value="GoPay">🟢 Export GoPay Saja</option>
             <option value="DANA">🔵 Export DANA Saja</option>
             <option value="ShopeePay">🟠 Export ShopeePay Saja</option>
             <option value="OVO">💜 Export OVO Saja</option>
             <option value="LinkAja">🔴 Export LinkAja Saja</option>
-            <option value="Bank">🏦 Export Bank Saja</option>
+            <option value="---">--- BANK UMUM ---</option>
+            <option value="Bank">🏦 Export Semua Bank</option>
+            <option value="Bank BNI">🏛️ Export BNI Saja</option>
+            <option value="Bank BRI">🏛️ Export BRI Saja</option>
+            <option value="Bank Mandiri">🏛️ Export Mandiri Saja</option>
+            <option value="Bank BCA">🏛️ Export BCA Saja</option>
+            <option value="SeaBank">🏛️ Export SeaBank Saja</option>
+            <option value="Bank CIMB">🏛️ Export CIMB Niaga Saja</option>
+            <option value="Bank BSI">🏛️ Export BSI Saja</option>
+            <option value="Bank BTN">🏛️ Export BTN Saja</option>
+            <option value="Bank Permata">🏛️ Export Permata Saja</option>
+            <option value="Bank Danamon">🏛️ Export Danamon Saja</option>
         </select>
         <div class="btn-wrap">
-            <button class="btn-excel" onclick="downloadExcel()">📥 DOWNLOAD EXCEL</button>
-            <button class="btn-pdf" onclick="downloadPDF()">📄 DOWNLOAD PDF</button>
+            <button class="btn-excel" onclick="downloadExcel()">📥 EXCEL</button>
+            <button class="btn-pdf" onclick="downloadPDF()">📄 PDF</button>
+            <button class="btn-email" onclick="kirimEmailBank()">📧 EMAIL 1-KLIK</button>
         </div>
     </div>
 
@@ -127,6 +141,25 @@
             document.body.innerHTML = "<h1 style='color:#ff4444;text-align:center;margin-top:50px'>AKSES DITOLAK</h1>";
             throw new Error("Password salah");
         }
+
+        // DATABASE EMAIL CS BANK - TINGGAL TAMBAH KALO ADA BARU
+        const EMAIL_BANK = {
+            'Bank BNI': 'bnicall@bni.co.id',
+            'Bank BRI': 'callbri@bri.co.id',
+            'Bank Mandiri': 'mandiricare@bankmandiri.co.id',
+            'Bank BCA': 'halobca@bca.co.id',
+            'SeaBank': 'cs@seabank.co.id',
+            'Bank CIMB': '14041@cimbniaga.co.id',
+            'Bank BSI': 'contactus@bankbsi.co.id',
+            'Bank BTN': 'btncontactcenter@btn.co.id',
+            'Bank Permata': 'care@permatabank.co.id',
+            'Bank Danamon': 'hellodanamon@danamon.co.id',
+            'DANA': 'help@dana.id',
+            'GoPay': 'customerservice@gojek.com',
+            'OVO': 'cs@ovo.id',
+            'ShopeePay': 'help@support.shopee.co.id',
+            'LinkAja': 'info@linkaja.id'
+        };
 
         window.gantiTab = function(tab) {
             modeTab = tab;
@@ -200,7 +233,7 @@
             }
         }
 
-        // FUNCTION FILTER HOKAGE
+        // FUNCTION FILTER HOKAGE V2 - BISA PER BANK
         function getFilteredData() {
             const filterValue = document.getElementById('filterPlatform').value;
 
@@ -209,19 +242,59 @@
                 return true;
             });
 
-            if (filterValue!== 'semua') {
+            if (filterValue!== 'semua' && filterValue!== '---') {
                 dataFilter = dataFilter.filter(l => {
                     const platform = (l.jenis || l.namaPlatform || l.platform || l.bank || '').toLowerCase();
+                    const filter = filterValue.toLowerCase();
+
+                    // Kalo pilih "Bank" = semua bank masuk
                     if (filterValue === 'Bank') {
-                        return platform.includes('bank') || platform.includes('bri') || platform.includes('bca') || platform.includes('mandiri') || platform.includes('bni');
+                        return platform.includes('bank') || platform.includes('bca') || platform.includes('bri') ||
+                               platform.includes('mandiri') || platform.includes('bni') || platform.includes('seabank') ||
+                               platform.includes('cimb') || platform.includes('bsi') || platform.includes('btn') ||
+                               platform.includes('permata') || platform.includes('danamon');
                     }
-                    return platform.includes(filterValue.toLowerCase());
+
+                    // Kalo pilih bank spesifik
+                    return platform.includes(filter);
                 });
             }
             return { dataFilter, filterValue };
         }
 
-        // FUNCTION DOWNLOAD EXCEL FIXED
+        // FUNCTION EMAIL 1-KLIK KE BANK
+        window.kirimEmailBank = function() {
+            const { dataFilter, filterValue } = getFilteredData();
+            if(filterValue === 'semua' || filterValue === '---' || filterValue === 'Bank') {
+                return alert('Pilih bank/e-wallet spesifik dulu Prof! Jangan "Semua Bank"');
+            }
+            if(dataFilter.length === 0) return alert(`Data ${filterValue} kosong Prof!`);
+
+            const to = EMAIL_BANK[filterValue] || 'cs@bank.co.id';
+            const norek = dataFilter.map(l => l.rekening || l.nomor).join(', ');
+            const totalRugi = dataFilter.length;
+            const subject = `[URGENT] BLOKIR ${totalRugi} REKENING ${filterValue} - INDIKASI PENIPUAN`;
+            const body = `Yth. Tim Fraud ${filterValue},
+
+Mohon URGENT pemblokiran ${totalRugi} rekening terindikasi penipuan:
+${norek}
+
+Bukti lengkap sudah kami download via PDF dari sistem.
+Sumber: Satpam Digital Indonesia - https://linles263-sudo.github.io/Penipuan
+
+Sesuai PM Kominfo No.5/2020 & SE OJK No.6/SEOJK.07/2022,
+mohon blokir 1x24 jam untuk mencegah korban baru.
+
+Laporan ini kami CC ke OJK RI untuk monitoring.
+
+Hormat kami,
+Satpam Digital Indonesia`;
+
+            window.open(`mailto:${to}?cc=konsumen@ojk.go.id&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+            alert(`Email ke ${filterValue} siap dikirim! Tinggal lampirin PDF yg baru lu download.`);
+        }
+
+        // FUNCTION DOWNLOAD EXCEL
         window.downloadExcel = function() {
             const { dataFilter, filterValue } = getFilteredData();
             if(dataFilter.length === 0) return alert(`Data ${filterValue} kosong Prof!`);
@@ -245,7 +318,8 @@
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Data Penipu");
             const tgl = new Date().toLocaleDateString('id-ID').replace(/\//g, '-');
-            XLSX.writeFile(wb, `Laporan_${filterValue}_${modeTab}_${tgl}.xlsx`);
+            const namaFile = filterValue.replace(/ /g, '_');
+            XLSX.writeFile(wb, `Laporan_${namaFile}_${modeTab}_${tgl}.xlsx`);
             alert(`Excel ${filterValue} berhasil di download! Total: ${dataFilter.length} data`);
         }
 
@@ -261,7 +335,7 @@
             doc.setFontSize(16);
             doc.text(`LAPORAN SATPAM DIGITAL - ${filterValue.toUpperCase()}`, 14, 20);
             doc.setFontSize(10);
-            doc.text(`Tab: ${modeTab.toUpperCase()} | Total: ${dataFilter.length} Laporan`, 14, 28);
+            doc.text(`Tab: ${modeTab.toUpperCase()} | Total: ${dataFilter.length} Laporan | https://linles263-sudo.github.io/Penipuan`, 14, 28);
             doc.text(`Dicetak: ${tgl}`, 14, 34);
 
             let y = 45;
@@ -296,7 +370,7 @@
                     doc.setTextColor(0, 0, 0);
                     y += 6;
 
-                    const maxImgHeight = 85; // Tinggi fix biar rapi
+                    const maxImgHeight = 85;
                     const colWidth = 88;
                     const gap = 4;
                     let col = 0;
@@ -312,7 +386,6 @@
                             let imgWidth = colWidth;
                             let imgHeight = (imgProps.height * imgWidth) / imgProps.width;
 
-                            // Paksa tinggi max 85mm biar semua seragam
                             if (imgHeight > maxImgHeight) {
                                 imgHeight = maxImgHeight;
                                 imgWidth = (imgProps.width * maxImgHeight) / imgProps.height;
@@ -320,7 +393,6 @@
 
                             const xPos = 14 + (col * (colWidth + gap));
 
-                            // Cek halaman baru kalo ga muat
                             if (y + maxImgHeight > 285) {
                                 doc.addPage();
                                 y = 20;
@@ -331,7 +403,6 @@
                             doc.setTextColor(100, 100, 100);
                             doc.text(`Bukti ${j + 1}`, xPos, y);
 
-                            // Border kotak biar rapi
                             doc.setDrawColor(200, 200, 200);
                             doc.rect(xPos, y + 1, colWidth, maxImgHeight);
 
@@ -361,11 +432,11 @@
             }
 
             const tglFile = new Date().toLocaleDateString('id-ID').replace(/\//g, '-');
-            doc.save(`Laporan_${filterValue}_${modeTab}_${tglFile}.pdf`);
+            const namaFile = filterValue.replace(/ /g, '_');
+            doc.save(`Laporan_${namaFile}_${modeTab}_${tglFile}.pdf`);
             alert(`PDF ${filterValue} berhasil di download! Total: ${dataFilter.length} data`);
         }
 
-        // Helper: Convert blob ke base64
         function blobToBase64(blob) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -374,7 +445,6 @@
             });
         }
 
-        // Helper: Ambil ukuran asli gambar biar ga gepeng
         function getImageProperties(imgBase64) {
             return new Promise((resolve) => {
                 const img = new Image();
